@@ -46,9 +46,6 @@ jobs:
           CIRCLE_ARTIFACTS: /tmp/circle-artifacts
           COMMON_GO_PACKAGES: >
             github.com/jstemmer/go-junit-report
-      - image: redis
-      - image: consul
-      - image: amazon/dynamodb-local
 
     working_directory: /go/src/github.com/launchdarkly/go-test-helpers
 
