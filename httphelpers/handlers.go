@@ -81,7 +81,7 @@ func HandlerWithJSONResponse(contentToEncode interface{}, additionalHeaders http
 				w.Header()[k] = vv
 			}
 			w.WriteHeader(200)
-			w.Write(bytes)
+			_, _ = w.Write(bytes)
 		}
 	})
 }
@@ -94,7 +94,7 @@ func HandlerWithResponse(status int, headers http.Header, body []byte) http.Hand
 		}
 		w.WriteHeader(status)
 		if body != nil {
-			w.Write(body)
+			_, _ = w.Write(body)
 		}
 	})
 }

@@ -64,7 +64,7 @@ func TestServerSideStreamingEndpointClosesStreamWhenHandlerIsClosed(t *testing.T
 
 		// Make sure consume stream errors so the error channel won't block on disconnect
 		go func() {
-			for _ = range stream.Errors {
+			for range stream.Errors {
 			}
 		}()
 
