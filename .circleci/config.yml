@@ -45,7 +45,6 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/circle-reports
           CIRCLE_ARTIFACTS: /tmp/circle-artifacts
           COMMON_GO_PACKAGES: >
-            github.com/golang/dep/cmd/dep
             github.com/jstemmer/go-junit-report
       - image: redis
       - image: consul
@@ -60,8 +59,6 @@ jobs:
           condition: <<parameters.run-lint>>
           steps:
             - run: make lint
-      - run: dep ensure -dry-run
-      - run: go build ./...
       
       - run:
           name: Run tests
@@ -94,37 +91,7 @@ jobs:
           command: |
             go env GOPATH
             mkdir ${env:GOPATH}\src\${env:PACKAGE_PATH}
-            mv * ${env:GOPATH}\src\${env:PACKAGE_PATH}\
-      - run:
-          name: setup DynamoDB
-          command: |
-            $ProgressPreference = "SilentlyContinue"  # prevents console errors from CircleCI host when we use iwr
-            iwr -outf dynamo.zip https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.zip
-            mkdir dynamo
-            Expand-Archive -Path dynamo.zip -DestinationPath dynamo
-            cd dynamo
-            javaw -D"java.library.path=./DynamoDBLocal_lib" -jar DynamoDBLocal.jar
-          background: true
-      - run:
-          name: setup Consul
-          command: |
-            $ProgressPreference = "SilentlyContinue"
-            iwr -outf consul.zip https://releases.hashicorp.com/consul/1.4.2/consul_1.4.2_windows_amd64.zip
-            mkdir consul
-            Expand-Archive -Path consul.zip -DestinationPath consul
-            cd consul
-            sc.exe create "Consul" binPath="$(Get-Location)/consul.exe agent -dev"
-            sc.exe start "Consul"
-      - run:
-          name: setup Redis
-          command: |
-            $ProgressPreference = "SilentlyContinue"
-            iwr -outf redis.zip https://github.com/MicrosoftArchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.zip
-            mkdir redis
-            Expand-Archive -Path redis.zip -DestinationPath redis
-            cd redis
-            ./redis-server --service-install
-            ./redis-server --service-start
+            mv * ${env:GOPATH}\src\${env:PACKAGE_PATH}
       - run:
           name: build and test
           command: |
