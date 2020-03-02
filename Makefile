@@ -14,6 +14,7 @@ clean:
 	go clean
 
 test: build
+	go get -t ./...
 	@# Note, we need to specify all these packages individually for go test in order to remain 1.8-compatible
 	go test -race -v . ./httphelpers ./ldservices
 
