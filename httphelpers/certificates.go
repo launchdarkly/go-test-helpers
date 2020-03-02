@@ -53,7 +53,10 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, *x
 	if err != nil {
 		panic(fmt.Errorf("can't read self-signed certificate: %s", err))
 	}
-	certPool, _ := x509.SystemCertPool()
+	certPool, err := x509.SystemCertPool()
+	if err != nil {
+		certPool = x509.NewCertPool() // necessary in order to work on Windows
+	}
 	certPool.AppendCertsFromPEM(certData)
 	server, err := MakeServerWithCert(certFilePath, keyFilePath, handler)
 	if err != nil {
