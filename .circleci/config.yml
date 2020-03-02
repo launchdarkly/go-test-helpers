@@ -21,12 +21,15 @@ workflows:
       - go-test:
           name: Go 1.10
           docker-image: circleci/golang:1.10
+          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
       - go-test:
           name: Go 1.9
           docker-image: circleci/golang:1.9
+          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
       - go-test:
           name: Go 1.8
           docker-image: circleci/golang:1.8
+          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
       - go-test-windows:
           name: Windows
 
