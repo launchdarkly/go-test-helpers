@@ -25,7 +25,7 @@ func FilePathExists(path string) bool {
 func WithTempFile(f func(string)) {
 	file, err := ioutil.TempFile("", "test")
 	if err != nil {
-		panic(fmt.Errorf("Can't create temp file: %s", err))
+		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
 	_ = file.Close()
 	path := file.Name()

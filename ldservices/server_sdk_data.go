@@ -69,7 +69,7 @@ func (s *ServerSDKData) Segments(segments ...KeyedData) *ServerSDKData {
 }
 
 // Id is for the eventsource.Event interface.
-func (s *ServerSDKData) Id() string {
+func (s *ServerSDKData) Id() string { //nolint // standard capitalization would be ID(), but we didn't define this interface
 	return ""
 }
 

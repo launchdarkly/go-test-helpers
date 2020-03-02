@@ -11,6 +11,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/big"
 	"net"
 	"net/http"
@@ -26,31 +27,37 @@ import (
 func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, *x509.CertPool)) {
 	certFile, err := ioutil.TempFile("", "test")
 	if err != nil {
-		panic(fmt.Errorf("Can't create temp file: %s", err))
+		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
 	_ = certFile.Close()
 	certFilePath := certFile.Name()
-	defer os.Remove(certFilePath)
+	tryToDelete := func(path string) {
+		err := os.Remove(path)
+		if err != nil {
+			log.Printf("Unable to clean up temp file %s: %s", path, err)
+		}
+	}
+	defer tryToDelete(certFilePath)
 	keyFile, err := ioutil.TempFile("", "test")
 	if err != nil {
-		panic(fmt.Errorf("Can't create temp file: %s", err))
+		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
 	_ = keyFile.Close()
 	keyFilePath := keyFile.Name()
-	defer os.Remove(keyFilePath)
+	defer tryToDelete(keyFilePath)
 	err = MakeSelfSignedCert(certFilePath, keyFilePath)
 	if err != nil {
-		panic(fmt.Errorf("Can't create self-signed certificate: %s", err))
+		panic(fmt.Errorf("can't create self-signed certificate: %s", err))
 	}
-	certData, err := ioutil.ReadFile(certFilePath)
+	certData, err := ioutil.ReadFile(certFilePath) //nolint:gosec
 	if err != nil {
-		panic(fmt.Errorf("Can't read self-signed certificate: %s", err))
+		panic(fmt.Errorf("can't read self-signed certificate: %s", err))
 	}
 	certPool, _ := x509.SystemCertPool()
 	certPool.AppendCertsFromPEM(certData)
 	server, err := MakeServerWithCert(certFilePath, keyFilePath, handler)
 	if err != nil {
-		panic(fmt.Errorf("Can't start HTTPS server: %s", err))
+		panic(fmt.Errorf("can't start HTTPS server: %s", err))
 	}
 	defer server.Close()
 	defer server.CloseClientConnections()

@@ -106,7 +106,7 @@ func HandlerWithStatus(status int) http.Handler {
 	})
 }
 
-// RecordingHTTPHandler wraps any HTTP handler in another handler that pushes received requests onto a channel.
+// RecordingHandler wraps any HTTP handler in another handler that pushes received requests onto a channel.
 //
 //     handler, requestsCh := httphelpers.RecordingHandler(httphelpers.HandlerWithStatus(200))
 //     httphelpers.WithServer(handler, func(server *http.TestServer) {
@@ -123,7 +123,7 @@ func RecordingHandler(delegateToHandler http.Handler) (http.Handler, <-chan HTTP
 	return handler, requestsCh
 }
 
-// SequentialHTTPHandler creates an HTTP handler that delegates to one handler per request, in the order given.
+// SequentialHandler creates an HTTP handler that delegates to one handler per request, in the order given.
 // If there are more requests than parameters, all subsequent requests go to the last handler.
 //
 // In this example, the first HTTP request will get a 503, and all subsequent requests will get a 200.

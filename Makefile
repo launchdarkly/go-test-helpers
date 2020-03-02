@@ -1,13 +1,8 @@
 
-GOLANGCI_LINT_VERSION=v1.10.2
-
-ifeq ($(LD_SKIP_DATABASE_TESTS),1)
-DB_TEST_PACKAGES=
-else
-DB_TEST_PACKAGES=./redis ./ldconsul ./lddynamodb
-endif
+GOLANGCI_LINT_VERSION=v1.22.2
 
 LINTER=./bin/golangci-lint
+LINTER_VERSION_FILE=./bin/.golangci-lint-version-$(GOLANGCI_LINT_VERSION)
 
 .PHONY: build clean test lint
 
@@ -22,8 +17,10 @@ test:
 	@# Note, we need to specify all these packages individually for go test in order to remain 1.8-compatible
 	go test -race -v . ./httphelpers ./ldservices
 
-$(LINTER):
+$(LINTER_VERSION_FILE):
+	rm -f $(LINTER)
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s $(GOLANGCI_LINT_VERSION)
+	touch $(LINTER_VERSION_FILE)
 
-lint: $(LINTER)
+lint: $(LINTER_VERSION_FILE)
 	$(LINTER) run ./...

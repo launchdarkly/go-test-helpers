@@ -6,7 +6,7 @@ type testSSEEvent struct {
 	id, event, data string
 }
 
-func (e testSSEEvent) Id() string    { return e.id }
+func (e testSSEEvent) Id() string    { return e.id } //nolint // standard capitalization would be ID(), but we didn't define this interface
 func (e testSSEEvent) Event() string { return e.event }
 func (e testSSEEvent) Data() string  { return e.data }
 
