@@ -22,9 +22,10 @@ import (
 
 // WithSelfSignedServer is a convenience function for starting a test HTTPS server with a self-signed
 // certificate, running the specified function, and then closing the server and cleaning up the
-// temporary certificate files. If for some reason creating the server fails, it panics. The
-// action function's second parameter provides the CA certificate for configuring the client.
-func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, *x509.CertPool)) {
+// temporary certificate files. If for some reason creating the server fails, it panics. The action
+// function's second and third parameters provide the CA certificate for configuring the client,
+// and a preconfigured CertPool in case that is more convenient to use.
+func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []byte, *x509.CertPool)) {
 	certFile, err := ioutil.TempFile("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
@@ -64,7 +65,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, *x
 	}
 	defer server.Close()
 	defer server.CloseClientConnections()
-	action(server, certPool)
+	action(server, certData, certPool)
 }
 
 // MakeServerWithCert creates and starts a test HTTPS server using the specified certificate.
