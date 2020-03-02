@@ -17,7 +17,8 @@ func FilePathExists(path string) bool {
 //
 // If for any reason it is not possible to create the file, a panic is raised since the test code cannot continue.
 //
-// If deletion of the file fails (assuming it has not already been deleted) then an error is logged, but there is no panic.
+// If deletion of the file fails (assuming it has not already been deleted) then an error is logged, but there is no
+// panic.
 //
 //     helpers.WithTempFile(func(path string) {
 //         DoSomethingWithTempFile(path)

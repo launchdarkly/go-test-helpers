@@ -29,7 +29,10 @@ const serverSideSDKStreamingPath = "/all"
 //     server := httptest.NewServer(handler)
 //     eventsCh <- ldservices.NewSSEEvent("", "patch", myPatchData) // push a "patch" event
 //     closer.Close() // force any current stream connections to be closed
-func ServerSideStreamingServiceHandler(initialEvent eventsource.Event, eventsCh <-chan eventsource.Event) (http.Handler, io.Closer) {
+func ServerSideStreamingServiceHandler(
+	initialEvent eventsource.Event,
+	eventsCh <-chan eventsource.Event,
+) (http.Handler, io.Closer) {
 	closerCh := make(chan struct{})
 	sh := &serverSideStreamingServiceHandler{
 		initialEvent: initialEvent,
@@ -74,7 +77,8 @@ func (s *serverSideStreamingServiceHandler) ServeHTTP(w http.ResponseWriter, r *
 	// that's a condition we want to be able to simulate in tests.
 
 	var closeNotifyCh <-chan bool
-	if closeNotifier, ok := w.(http.CloseNotifier); ok { //nolint:megacheck // CloseNotifier is deprecated but there's no way to use Context in this case
+	// CloseNotifier is deprecated but there's no way to use Context in this case
+	if closeNotifier, ok := w.(http.CloseNotifier); ok { //nolint:megacheck
 		closeNotifyCh = closeNotifier.CloseNotify()
 	}
 

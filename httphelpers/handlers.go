@@ -10,7 +10,7 @@ import (
 // HTTPRequestInfo represents a request captured by NewRecordingHTTPHandler.
 type HTTPRequestInfo struct {
 	Request *http.Request
-	Body    []byte // body has to be captured separately by the test server because you can't read it after the response is sent
+	Body    []byte // body has to be captured separately by server because you can't read it after the response is sent
 }
 
 func getRequestBody(request *http.Request) []byte {

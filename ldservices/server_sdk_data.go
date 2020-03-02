@@ -78,7 +78,8 @@ func (s *ServerSDKData) Event() string {
 	return "put"
 }
 
-// Data is for the eventsource.Event interface. It provides the marshalled data in the format used by the streaming service.
+// Data is for the eventsource.Event interface. It provides the marshalled data in the format used by the streaming
+// service.
 func (s *ServerSDKData) Data() string {
 	return `{"path": "/", "data": ` + s.String() + "}"
 }
