@@ -59,7 +59,6 @@ type serverSideStreamingServiceCloser struct {
 }
 
 func (s *serverSideStreamingServiceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("I got a connection")
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		log.Println("ServerSideStreamingServiceHandler can't be used with a ResponseWriter that does not support Flush")
