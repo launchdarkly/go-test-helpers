@@ -1,0 +1,21 @@
+run:
+  deadline: 120s
+  tests: false
+
+linters:
+  enable-all: true
+  disable:
+    - funlen # allow long/complex functions for now
+    - gocognit # allow long/complex functions for now
+    - gomnd # extremely aggressive linter that complains about all numeric literals, even just adding 1 to something (https://github.com/tommy-muehle/go-mnd)
+    - wsl # enforces a very specific style with an idiosyncratic definition of what "cuddling" is
+  fast: false
+
+linter-settings:
+  gofmt:
+    simplify: false
+
+issues:
+  exclude-use-default: false
+  max-same-issues: 1000
+  max-per-linter: 1000
