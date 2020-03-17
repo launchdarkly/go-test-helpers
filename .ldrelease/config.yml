@@ -1,7 +1,7 @@
 template:
   name: go
   env:
-    LD_RELEASE_GO_IMPORT_PATH=github.com/launchdarkly/go-test-helpers
+    LD_RELEASE_GO_IMPORT_PATH: github.com/launchdarkly/go-test-helpers
 
 publications:
   - url: https://godoc.org/github.com/launchdarkly/go-test-helpers
