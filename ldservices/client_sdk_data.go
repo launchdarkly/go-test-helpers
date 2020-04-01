@@ -43,16 +43,37 @@ func (f FlagValueData) Event() string {
 // Data is for the eventsource.Event interface. It provides the marshalled data in the format used by the streaming
 // service.
 func (f FlagValueData) Data() string {
-	bytes, _ := json.Marshal(f)
-	return string(bytes)
+	return string(f.ToJSON(true))
 }
 
-// ClientSDKData is a set of flag value data as provided by the client-side SDK endpoints.
-//
-// It also implements the eventsource.Event interface, simulating a "put" event for the streaming service.
-type ClientSDKData map[string]flagValueDataJSON
+// ToJSON returns the JSON representation of the flag data.
+func (f FlagValueData) ToJSON(withKey bool) []byte {
+	d := flagValueDataJSON{
+		Version:     f.Version,
+		FlagVersion: f.FlagVersion,
+		Value:       f.Value,
+	}
+	if withKey {
+		d.Key = &f.Key
+	}
+	if f.VariationIndex >= 0 {
+		d.VariationIndex = &f.VariationIndex
+	}
+	if !f.Reason.IsNull() {
+		d.Reason = &f.Reason
+	}
+	if f.TrackEvents {
+		d.TrackEvents = &f.TrackEvents
+	}
+	if f.DebugEventsUntilDate > 0 {
+		d.DebugEventsUntilDate = &f.DebugEventsUntilDate
+	}
+	json, _ := json.Marshal(d)
+	return json
+}
 
 type flagValueDataJSON struct {
+	Key                  *string        `json:"key,omitempty"`
 	Version              int            `json:"version"`
 	FlagVersion          int            `json:"flagVersion"`
 	Value                ldvalue.Value  `json:"value"`
@@ -61,6 +82,11 @@ type flagValueDataJSON struct {
 	TrackEvents          *bool          `json:"trackEvents,omitempty"`
 	DebugEventsUntilDate *uint64        `json:"debugEventsUntilDate,omitempty"`
 }
+
+// ClientSDKData is a set of flag value data as provided by the client-side SDK endpoints.
+//
+// It also implements the eventsource.Event interface, simulating a "put" event for the streaming service.
+type ClientSDKData map[string]json.RawMessage
 
 // NewClientSDKData creates a ClientSDKData instance.
 //
@@ -72,25 +98,7 @@ func NewClientSDKData() ClientSDKData {
 // Flags adds the specified items to the flags map.
 func (c ClientSDKData) Flags(flags ...FlagValueData) ClientSDKData {
 	for _, flag := range flags {
-		f := flag
-		d := flagValueDataJSON{
-			Version:     f.Version,
-			FlagVersion: f.FlagVersion,
-			Value:       f.Value,
-		}
-		if f.VariationIndex >= 0 {
-			d.VariationIndex = &f.VariationIndex
-		}
-		if !f.Reason.IsNull() {
-			d.Reason = &f.Reason
-		}
-		if f.TrackEvents {
-			d.TrackEvents = &f.TrackEvents
-		}
-		if f.DebugEventsUntilDate > 0 {
-			d.DebugEventsUntilDate = &f.DebugEventsUntilDate
-		}
-		c[f.Key] = d
+		c[flag.Key] = flag.ToJSON(false)
 	}
 	return c
 }

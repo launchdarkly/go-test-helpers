@@ -9,6 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFlagValuePatchEvent(t *testing.T) {
+	f := FlagValueData{Key: "flagkey", Version: 1, FlagVersion: 1000, Value: ldvalue.Bool(true), VariationIndex: 1}
+
+	bytes1 := f.ToJSON(true)
+	expectedJSON1 := `{"key": "flagkey", "version": 1, "flagVersion": 1000, "value": true, "variation": 1}`
+	assertJSONEqual(t, expectedJSON1, string(bytes1))
+
+	bytes2 := f.ToJSON(false)
+	expectedJSON2 := `{"version": 1, "flagVersion": 1000, "value": true, "variation": 1}`
+	assertJSONEqual(t, expectedJSON2, string(bytes2))
+}
+
 func TestEmptyClientSDKData(t *testing.T) {
 	expectedJSON := `{}`
 	data := NewClientSDKData()
