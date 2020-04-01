@@ -4,10 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldtime"
-
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldreason"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
+	"gopkg.in/launchdarkly/go-sdk-common.v1/ldvalue"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -27,9 +24,9 @@ func TestClientSDKDataWithFlags(t *testing.T) {
 		FlagVersion:          1000,
 		Value:                ldvalue.String("a"),
 		VariationIndex:       2,
-		Reason:               ldreason.NewEvalReasonFallthrough(),
+		Reason:               ldvalue.ObjectBuild().Set("kind", ldvalue.String("FALLTHROUGH")).Build(),
 		TrackEvents:          true,
-		DebugEventsUntilDate: ldtime.UnixMillisecondTime(3000),
+		DebugEventsUntilDate: uint64(3000),
 	}
 	flag2 := FlagValueData{
 		Key:            "flagkey2",

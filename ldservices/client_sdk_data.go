@@ -3,9 +3,7 @@ package ldservices
 import (
 	"encoding/json"
 
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldreason"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldtime"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
+	"gopkg.in/launchdarkly/go-sdk-common.v1/ldvalue"
 )
 
 // FlagValueData corresponds to the representation used by the client-side SDK endpoints.
@@ -22,12 +20,14 @@ type FlagValueData struct {
 	Value ldvalue.Value
 	// VariationIndex is the variation index for the current user. Use -1 to omit this.
 	VariationIndex int
-	// Reason is the evaluation reason, if available.
-	Reason ldreason.EvaluationReason
+	// Reason is the evaluation reason, if available. This is specified as an `ldvalue.Value` to avoid having to
+	// bring in `EvaluationReason` and related types; the caller is responsible for providing the JSON
+	// representation of the reason.
+	Reason ldvalue.Value
 	// TrackEvents is true if full event tracking is enabled for this flag.
 	TrackEvents bool
 	// DebugEventsUntilDate is the time, if any, until which debugging is enabled for this flag.
-	DebugEventsUntilDate ldtime.UnixMillisecondTime
+	DebugEventsUntilDate uint64
 }
 
 // Id is for the eventsource.Event interface.
@@ -53,13 +53,13 @@ func (f FlagValueData) Data() string {
 type ClientSDKData map[string]flagValueDataJson
 
 type flagValueDataJson struct {
-	Version              int                         `json:"version"`
-	FlagVersion          int                         `json:"flagVersion"`
-	Value                ldvalue.Value               `json:"value"`
-	VariationIndex       *int                        `json:"variation,omitempty"`
-	Reason               *ldreason.EvaluationReason  `json:"reason,omitempty"`
-	TrackEvents          *bool                       `json:"trackEvents,omitempty"`
-	DebugEventsUntilDate *ldtime.UnixMillisecondTime `json:"debugEventsUntilDate,omitempty"`
+	Version              int            `json:"version"`
+	FlagVersion          int            `json:"flagVersion"`
+	Value                ldvalue.Value  `json:"value"`
+	VariationIndex       *int           `json:"variation,omitempty"`
+	Reason               *ldvalue.Value `json:"reason,omitempty"`
+	TrackEvents          *bool          `json:"trackEvents,omitempty"`
+	DebugEventsUntilDate *uint64        `json:"debugEventsUntilDate,omitempty"`
 }
 
 // NewClientSDKData creates a ClientSDKData instance.
@@ -81,7 +81,7 @@ func (c ClientSDKData) Flags(flags ...FlagValueData) ClientSDKData {
 		if f.VariationIndex >= 0 {
 			d.VariationIndex = &f.VariationIndex
 		}
-		if f.Reason.GetKind() != "" {
+		if !f.Reason.IsNull() {
 			d.Reason = &f.Reason
 		}
 		if f.TrackEvents {

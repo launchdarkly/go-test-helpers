@@ -11,7 +11,7 @@ import (
 	"github.com/launchdarkly/go-test-helpers/httphelpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
+	"gopkg.in/launchdarkly/go-sdk-common.v1/ldvalue"
 )
 
 func TestStreamingEndpoint(t *testing.T) {
@@ -39,17 +39,6 @@ func TestStreamingEndpoint(t *testing.T) {
 		assert.Equal(t, event2.Id(), event3.Id())
 		assert.Equal(t, event2.Event(), event3.Event())
 		assert.Equal(t, event2.Data(), event3.Data())
-	})
-}
-
-func TestStreamingEndpointReturns405ForWrongMethod(t *testing.T) {
-	eventsCh := make(chan eventsource.Event)
-	defer close(eventsCh)
-	handler, _ := StreamingServiceHandler(nil, eventsCh)
-
-	httphelpers.WithServer(handler, func(server *httptest.Server) {
-		resp, _ := http.DefaultClient.Post(server.URL+"/any-url-path", "text/plain", bytes.NewBufferString("hello"))
-		assert.Equal(t, 405, resp.StatusCode)
 	})
 }
 
@@ -128,6 +117,17 @@ func TestServerSideStreamingEndpointReturns404ForWrongURL(t *testing.T) {
 	httphelpers.WithServer(handler, func(server *httptest.Server) {
 		resp, _ := http.DefaultClient.Get(server.URL + "/some/other/path")
 		assert.Equal(t, 404, resp.StatusCode)
+	})
+}
+
+func TestServerSideStreamingEndpointReturns405ForWrongMethod(t *testing.T) {
+	eventsCh := make(chan eventsource.Event)
+	defer close(eventsCh)
+	handler, _ := ServerSideStreamingServiceHandler(nil, eventsCh)
+
+	httphelpers.WithServer(handler, func(server *httptest.Server) {
+		resp, _ := http.DefaultClient.Post(server.URL+ServerSideSDKStreamingPath, "text/plain", bytes.NewBufferString("hello"))
+		assert.Equal(t, 405, resp.StatusCode)
 	})
 }
 
