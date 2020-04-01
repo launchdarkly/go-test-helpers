@@ -50,9 +50,9 @@ func (f FlagValueData) Data() string {
 // ClientSDKData is a set of flag value data as provided by the client-side SDK endpoints.
 //
 // It also implements the eventsource.Event interface, simulating a "put" event for the streaming service.
-type ClientSDKData map[string]flagValueDataJson
+type ClientSDKData map[string]flagValueDataJSON
 
-type flagValueDataJson struct {
+type flagValueDataJSON struct {
 	Version              int            `json:"version"`
 	FlagVersion          int            `json:"flagVersion"`
 	Value                ldvalue.Value  `json:"value"`
@@ -73,7 +73,7 @@ func NewClientSDKData() ClientSDKData {
 func (c ClientSDKData) Flags(flags ...FlagValueData) ClientSDKData {
 	for _, flag := range flags {
 		f := flag
-		d := flagValueDataJson{
+		d := flagValueDataJSON{
 			Version:     f.Version,
 			FlagVersion: f.FlagVersion,
 			Value:       f.Value,

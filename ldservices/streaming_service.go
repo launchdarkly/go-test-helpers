@@ -11,10 +11,19 @@ import (
 )
 
 const (
-	// The expected request path for server-side SDK stream requests.
-	ServerSideSDKStreamingPath     = "/all"
+	// ServerSideSDKStreamingPath is the expected request path for server-side SDK stream requests.
+	ServerSideSDKStreamingPath = "/all"
+	// ClientSideSDKStreamingBasePath is the expected request path for client-side SDK stream requests that
+	// use the REPORT method, or the base path (not including ClientSideOrMobileUserSubpath) for requests that
+	// use the GET method.
 	ClientSideSDKStreamingBasePath = "/eval"
-	MobileSDKStreamingBasePath     = "/meval"
+	// MobileSDKStreamingBasePath is the expected request path for mobile SDK stream requests that
+	// use the REPORT method, or the base path (not including ClientSideOrMobileUserSubpath) for requests that
+	// use the GET method.
+	MobileSDKStreamingBasePath = "/meval"
+	// ClientSideOrMobileUserSubpath is a subpath added to client-side/mobile GET requests. The base64-encoded
+	// user data follows this.
+	ClientSideOrMobileUserSubpath = "/user/"
 )
 
 // StreamingServiceHandler creates an HTTP handler that provides an SSE stream.
@@ -53,7 +62,7 @@ func StreamingServiceHandler(
 // This is the same as StreamingServiceHandler, but enforces that the request path is ServerSideSDKStreamingPath and
 // that the method is GET.
 //
-//     initialData := ldservices.NewServerSDKData().Flags(flag1, flag2) // all connections will receive this in a "put" event
+//     initialData := ldservices.NewServerSDKData().Flags(flag1, flag2) // all clients will get this in a "put" event
 //     eventsCh := make(chan eventsource.Event)
 //     handler, closer := ldservices.ServerSideStreamingHandler(initialData, eventsCh)
 //     server := httptest.NewServer(handler)
@@ -73,7 +82,7 @@ func ServerSideStreamingServiceHandler(
 // This is the same as StreamingServiceHandler, but enforces that the request path and method correspond to one of
 // the client-side/mobile endpoints.
 //
-//     initialData := ldservices.NewClientSDKData().Flags(flag1, flag2) // all connections will receive this in a "put" event
+//     initialData := ldservices.NewClientSDKData().Flags(flag1, flag2) // all clients will get this in a "put" event
 //     eventsCh := make(chan eventsource.Event)
 //     handler, closer := ldservices.ClientSideStreamingHandler(initialData, eventsCh)
 //     server := httptest.NewServer(handler)
@@ -88,13 +97,13 @@ func ClientSideStreamingServiceHandler(
 		ClientSideSDKStreamingBasePath,
 		httphelpers.HandlerForMethod("REPORT", handler, nil),
 		httphelpers.HandlerForPathRegex(
-			"^"+ClientSideSDKStreamingBasePath+"/user/.*",
+			"^"+ClientSideSDKStreamingBasePath+ClientSideOrMobileUserSubpath+".*",
 			httphelpers.HandlerForMethod("GET", handler, nil),
 			httphelpers.HandlerForPath(
 				MobileSDKStreamingBasePath,
 				httphelpers.HandlerForMethod("REPORT", handler, nil),
 				httphelpers.HandlerForPathRegex(
-					"^"+MobileSDKStreamingBasePath+"/user/.*",
+					"^"+MobileSDKStreamingBasePath+ClientSideOrMobileUserSubpath+".*",
 					httphelpers.HandlerForMethod("GET", handler, nil),
 					nil,
 				),
