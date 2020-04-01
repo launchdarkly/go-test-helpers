@@ -70,6 +70,27 @@ func TestHandlerForPath(t *testing.T) {
 	assert.Equal(t, 404, rr3.Code)
 }
 
+func TestHandlerForPathRegex(t *testing.T) {
+	h1 := HandlerWithStatus(200)
+	h2 := HandlerWithStatus(304)
+	hp := HandlerForPathRegex("^/path[12]$", h1, h2)
+
+	rr1 := httptest.NewRecorder()
+	req1, _ := http.NewRequest("GET", "/path1", nil)
+	hp.ServeHTTP(rr1, req1)
+	assert.Equal(t, 200, rr1.Code)
+
+	rr2 := httptest.NewRecorder()
+	req2, _ := http.NewRequest("GET", "/path2", nil)
+	hp.ServeHTTP(rr2, req2)
+	assert.Equal(t, 200, rr2.Code)
+
+	rr3 := httptest.NewRecorder()
+	req3, _ := http.NewRequest("GET", "/path3", nil)
+	hp.ServeHTTP(rr3, req3)
+	assert.Equal(t, 304, rr3.Code)
+}
+
 func TestHandlerWithJSONResponse(t *testing.T) {
 	jsonObject := map[string]string{"things": "stuff"}
 	headers := make(http.Header)
