@@ -139,7 +139,7 @@ func TestClientSideStreamingEndpoint(t *testing.T) {
 	defer closer.Close()
 
 	httphelpers.WithServer(handler, func(server *httptest.Server) {
-		stream1, err := eventsource.SubscribeWithURL(server.URL + ClientSideSDKStreamingBasePath + "/user/00000")
+		stream1, err := eventsource.SubscribeWithURL(server.URL + ClientSideSDKStreamingBasePath + "/envxxx/userxxx")
 		require.NoError(t, err)
 		defer stream1.Close()
 
@@ -155,11 +155,11 @@ func TestClientSideStreamingEndpoint(t *testing.T) {
 		assert.Equal(t, event2.Event(), event3.Event())
 		assert.Equal(t, event2.Data(), event3.Data())
 
-		stream2, err := eventsource.SubscribeWithURL(server.URL + MobileSDKStreamingBasePath + "/user/00000")
+		stream2, err := eventsource.SubscribeWithURL(server.URL + MobileSDKStreamingBasePath + "/userxxx")
 		require.NoError(t, err)
 		stream2.Close()
 
-		req3, _ := http.NewRequest("REPORT", server.URL+ClientSideSDKStreamingBasePath, bytes.NewReader([]byte("{}")))
+		req3, _ := http.NewRequest("REPORT", server.URL+ClientSideSDKStreamingBasePath+"/envxxx", bytes.NewReader([]byte("{}")))
 		stream3, err := eventsource.SubscribeWithRequestAndOptions(req3)
 		require.NoError(t, err)
 		stream3.Close()
