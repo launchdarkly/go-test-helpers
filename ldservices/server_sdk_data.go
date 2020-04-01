@@ -20,8 +20,6 @@ func (f fakeFlagOrSegment) GetKey() string {
 
 // FlagOrSegment provides a stub implementation of KeyedData that has only "key" and "version" properties.
 // This may be enough for some testing purposes that don't require full flag or segment data.
-//
-// It also implements the eventsource.Event interface, simulating a "patch" event for the streaming service.
 func FlagOrSegment(key string, version int) KeyedData {
 	return fakeFlagOrSegment{Key: key, Version: version}
 }

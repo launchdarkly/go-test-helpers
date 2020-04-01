@@ -6,6 +6,7 @@ import (
 
 	"gopkg.in/launchdarkly/go-sdk-common.v1/ldvalue"
 
+	"github.com/launchdarkly/eventsource"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,6 +16,10 @@ func TestFlagValuePatchEvent(t *testing.T) {
 	bytes1 := f.ToJSON(true)
 	expectedJSON1 := `{"key": "flagkey", "version": 1, "flagVersion": 1000, "value": true, "variation": 1}`
 	assertJSONEqual(t, expectedJSON1, string(bytes1))
+
+	var event eventsource.Event = f
+	assert.Equal(t, "patch", event.Event())
+	assert.Equal(t, string(bytes1), event.Data())
 
 	bytes2 := f.ToJSON(false)
 	expectedJSON2 := `{"version": 1, "flagVersion": 1000, "value": true, "variation": 1}`
