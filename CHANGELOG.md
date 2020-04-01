@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [1.1.2] - 2020-04-01
+### Fixed:
+- Patch event type for client-side streams.
+
 ## [1.1.1] - 2020-04-01
 ### Fixed:
 - In `ldservices`, fixed JSON property names for simulated client-side flag data.
