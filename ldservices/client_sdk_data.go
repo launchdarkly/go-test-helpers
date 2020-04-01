@@ -37,7 +37,7 @@ func (f FlagValueData) Id() string { //nolint // standard capitalization would b
 
 // Event is for the eventsource.Event interface. It returns "patch".
 func (f FlagValueData) Event() string {
-	return "put"
+	return "patch"
 }
 
 // Data is for the eventsource.Event interface. It provides the marshalled data in the format used by the streaming
