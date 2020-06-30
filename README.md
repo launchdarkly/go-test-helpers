@@ -14,6 +14,8 @@ Subpackage `httphelpers` provides convenience wrappers for using `net/http` and 
 
 Subpackage `ldservices` is specifically for testing LaunchDarkly SDK client components; it provides HTTP handlers that simulate the service endpoints used by the SDK.
 
+Subpackage `testbox` provides the ability to write tests-of-tests within the Go testing framework.
+
 ## Usage
 
 Import any of these packages in your test code:
@@ -23,10 +25,11 @@ import (
     "github.com/launchdarkly/go-test-helpers"
     "github.com/launchdarkly/go-test-helpers/httphelpers"
     "github.com/launchdarkly/go-test-helpers/ldservices"
+    "github.com/launchdarkly/go-test-helpers/testbox"
 )
 ```
 
-Breaking changes will only be made in a new major version. It is advisable to use a dependency manager to pin these dependencies to a major version branch (`v1`, etc.).
+Breaking changes will only be made in a new major version. It is advisable to use a dependency manager to pin these dependencies to a module version or a major version branch.
 
 ## Contributing
 
