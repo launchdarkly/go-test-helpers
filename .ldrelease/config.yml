@@ -3,6 +3,10 @@ template:
   env:
     LD_RELEASE_GO_IMPORT_PATH: github.com/launchdarkly/go-test-helpers
 
+releasableBranches:
+  - name: v1
+  - name: v2
+
 publications:
-  - url: https://godoc.org/github.com/launchdarkly/go-test-helpers
+  - url: https://pkg.go.dev/github.com/launchdarkly/go-test-helpers
     description: documentation

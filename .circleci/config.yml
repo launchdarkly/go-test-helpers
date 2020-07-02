@@ -12,34 +12,6 @@ workflows:
       - go-test:
           name: Go 1.13
           docker-image: circleci/golang:1.13
-      - go-test:
-          name: Go 1.12
-          docker-image: circleci/golang:1.12
-          with-modules: false
-          work-dir: /go/src/github.com/launchdarkly/go-test-helpers
-      - go-test:
-          name: Go 1.11
-          docker-image: circleci/golang:1.11
-          with-modules: false
-          work-dir: /go/src/github.com/launchdarkly/go-test-helpers
-      - go-test:
-          name: Go 1.10
-          docker-image: circleci/golang:1.10
-          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
-          with-modules: false
-          work-dir: /go/src/github.com/launchdarkly/go-test-helpers
-      - go-test:
-          name: Go 1.9
-          docker-image: circleci/golang:1.9
-          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
-          with-modules: false
-          work-dir: /go/src/github.com/launchdarkly/go-test-helpers
-      - go-test:
-          name: Go 1.8
-          docker-image: circleci/golang:1.8
-          run-lint: false # the version of golangci-lint we're using doesn't work with older Go versions
-          with-modules: false
-          work-dir: /go/src/github.com/launchdarkly/go-test-helpers
       - go-test-windows:
           name: Windows
 
@@ -51,12 +23,6 @@ jobs:
       run-lint:
         type: boolean
         default: true
-      with-modules:
-        type: boolean
-        default: true
-      work-dir:
-        type: string
-        default: ~/project
 
     docker:
       - image: <<parameters.docker-image>>
@@ -64,20 +30,11 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/circle-reports
           CIRCLE_ARTIFACTS: /tmp/circle-artifacts
 
-    working_directory: <<parameters.work-dir>>
-
     steps:
       - checkout
       - run:
           name: install go-junit-report
           command: go get -u github.com/jstemmer/go-junit-report
-
-      - unless:
-          condition: <<parameters.with-modules>>
-          steps:
-            - run:
-                name: get dependencies
-                command: go get -t ./...
 
       - when:
           condition: <<parameters.run-lint>>
