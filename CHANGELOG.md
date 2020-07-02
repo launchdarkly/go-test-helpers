@@ -2,6 +2,20 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.0.0] - 2020-07-01
+### Added:
+- In `httphelpers`, `ChunkedStreamingHandler`, `SSEHandler`, and `SSEEvent`
+- In the main package, `ReadWithTimeout`.
+
+### Changed:
+- This project now requires modules and has a minimum Go version of 1.13.
+- In `ldservices`, `ServerSideStreamingServiceHandler` now uses `httphelpers.SSEEvent` instead of having a dependency on the `eventsource` package. Its interface is now based on the new `SSEHandler` instead of using channels.
+- In `httphelpers`, `PanicHandler` is replaced by `BrokenConnectionHandler`.
+
+### Removed:
+- The LaunchDarkly client-side streaming endpoint handler in `ldservices` was not used and has been removed.
+
+
 ## [1.2.0] - 2020-07-01
 ### Added:
 - New package `testbox` for running a Go test in a temporary environment.
