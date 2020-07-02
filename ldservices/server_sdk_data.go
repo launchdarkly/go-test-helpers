@@ -1,6 +1,11 @@
 package ldservices
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/launchdarkly/go-test-helpers/httphelpers"
+)
 
 // KeyedData is an interface for use with ServerSideData as an abstraction for data model objects that
 // have a key, since this package cannot depend on LaunchDarkly data model types themselves. The actual
@@ -30,8 +35,6 @@ func FlagOrSegment(key string, version int) KeyedData {
 //
 //     data := NewServerSDKData().Flags(flag1, flag2)
 //     handler := PollingServiceHandler(data)
-//
-// It also implements the eventsource.Event interface, simulating a "put" event for the streaming service.
 type ServerSDKData struct {
 	FlagsMap    map[string]interface{} `json:"flags"`
 	SegmentsMap map[string]interface{} `json:"segments"`
@@ -68,18 +71,10 @@ func (s *ServerSDKData) Segments(segments ...KeyedData) *ServerSDKData {
 	return s
 }
 
-// Id is for the eventsource.Event interface.
-func (s *ServerSDKData) Id() string { //nolint // standard capitalization would be ID(), but we didn't define this interface
-	return ""
-}
-
-// Event is for the eventsource.Event interface. It returns "put".
-func (s *ServerSDKData) Event() string {
-	return "put"
-}
-
-// Data is for the eventsource.Event interface. It provides the marshalled data in the format used by the streaming
-// service.
-func (s *ServerSDKData) Data() string {
-	return `{"path": "/", "data": ` + s.String() + "}"
+// ToPutEvent creates an SSE event in the format that is used by the server-side SDK streaming endpoint.
+func (s *ServerSDKData) ToPutEvent() httphelpers.SSEEvent {
+	return httphelpers.SSEEvent{
+		Event: "put",
+		Data:  fmt.Sprintf(`{"path": "/", "data": %s}`, s),
+	}
 }

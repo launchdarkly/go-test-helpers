@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"regexp"
 )
 
@@ -162,16 +163,28 @@ func SequentialHandler(firstHandler http.Handler, remainingHandlers ...http.Hand
 	})
 }
 
-// PanicHandler creates an HTTP handler that will panic.
+// BrokenConnectionHandler creates an HTTP handler that will simulate an I/O error.
 //
-// This is not useful inside an actual HTTP server, but when used in conjunction with NewHTTPClientFromHandler,
-// it allows you to simulate an I/O error.
+// When used with an httptest.Server, the handler forces an early close of the connection.
+// When used in a client created with ClientFromHandler, it causes a panic which is recovered
+// and converted to an error result. However, do not use this with httptest.ResponseRecorder
+// or your test will panic.
 //
-//     handler := PanicHandler(&net.AddrError{})
+//     handler := BrokenConnectionHandler()
 //     client := NewClientFromHandler(handler)
-//     // All requests made with this client will return an AddrError (or some other error that wraps that error)
-func PanicHandler(err error) http.Handler {
+//     // All requests made with this client will return an error
+func BrokenConnectionHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		panic(err)
+		if _, ok := w.(*httptest.ResponseRecorder); ok {
+			panic("httphelpers.BrokenConnectionHandler cannot be used with a ResponseRecorder")
+		}
+		if h, ok := w.(http.Hijacker); ok {
+			conn, _, err := h.Hijack()
+			if err == nil {
+				_ = conn.Close()
+				return
+			}
+		}
+		panic("connection deliberately closed by httphelpers.BrokenConnectionHandler")
 	})
 }
