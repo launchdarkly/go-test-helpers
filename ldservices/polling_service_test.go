@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/launchdarkly/go-test-helpers/httphelpers"
+	"github.com/launchdarkly/go-test-helpers/v2/httphelpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

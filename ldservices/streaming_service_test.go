@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	helpers "github.com/launchdarkly/go-test-helpers"
-	"github.com/launchdarkly/go-test-helpers/httphelpers"
+	helpers "github.com/launchdarkly/go-test-helpers/v2"
+	"github.com/launchdarkly/go-test-helpers/v2/httphelpers"
 )
 
 func TestServerSideStreamingServiceHandler(t *testing.T) {

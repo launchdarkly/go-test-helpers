@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/launchdarkly/go-test-helpers/httphelpers"
+	"github.com/launchdarkly/go-test-helpers/v2/httphelpers"
 )
 
 // KeyedData is an interface for use with ServerSideData as an abstraction for data model objects that
