@@ -41,6 +41,14 @@ type SSEStreamControl interface {
 	// event is sent to all of them. If there are no open connections, the event is discarded.
 	Send(event SSEEvent)
 
+	// EnqueueComment is the same as Enqueue, except that it sends a comment line instead of an
+	// event. A colon is prepended to the comment.
+	EnqueueComment(comment string)
+
+	// SendComment is the same as Send, except that it sends a comment line instead of an event.
+	// A colon is prepended to the comment.
+	SendComment(comment string)
+
 	// EndAll terminates any existing connections to this endpoint, but allows new connections
 	// afterward.
 	EndAll()
@@ -97,6 +105,14 @@ func (s *sseStreamControlImpl) Enqueue(event SSEEvent) {
 
 func (s *sseStreamControlImpl) Send(event SSEEvent) {
 	s.streamControl.Send(event.Bytes())
+}
+
+func (s *sseStreamControlImpl) EnqueueComment(comment string) {
+	s.streamControl.Enqueue([]byte(fmt.Sprintf(":%s\n", comment)))
+}
+
+func (s *sseStreamControlImpl) SendComment(comment string) {
+	s.streamControl.Send([]byte(fmt.Sprintf(":%s\n", comment)))
 }
 
 func (s *sseStreamControlImpl) EndAll() {

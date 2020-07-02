@@ -16,6 +16,7 @@ func TestSSEHandler(t *testing.T) {
 	defer stream.Close()
 
 	stream.Enqueue(SSEEvent{"", "event2", "data2"})
+	stream.EnqueueComment("comment1")
 	stream.Send(SSEEvent{"", "", "this isn't sent becauset here are no connections"})
 
 	WithServer(handler, func(server *httptest.Server) {
@@ -26,6 +27,7 @@ func TestSSEHandler(t *testing.T) {
 		assert.Equal(t, 200, resp1.StatusCode)
 		assert.Equal(t, "text/event-stream; charset=utf-8", resp1.Header.Get("Content-Type"))
 
+		stream.SendComment("comment2")
 		stream.Enqueue(SSEEvent{"", "event3", "data3"})
 		stream.EndAll()
 
@@ -39,6 +41,8 @@ data: data1
 event: event2
 data: data2
 
+:comment1
+:comment2
 event: event3
 data: data3
 
