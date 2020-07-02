@@ -13,13 +13,25 @@ import (
 	helpers "github.com/launchdarkly/go-test-helpers/v2"
 )
 
+func TestChunkedStreamingHandlerReturnsResponseBeforeFirstData(t *testing.T) {
+	handler, stream := ChunkedStreamingHandler(nil, "text/plain")
+	defer stream.Close()
+
+	WithServer(handler, func(server *httptest.Server) {
+		resp, err := http.DefaultClient.Get(server.URL)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+		assert.Equal(t, 200, resp.StatusCode)
+	})
+}
+
 func TestChunkedStreamingHandlerSend(t *testing.T) {
 	initialData := []byte("hello,")
 	handler, stream := ChunkedStreamingHandler(initialData, "text/plain")
 	defer stream.Close()
 
 	stream.Enqueue([]byte("first,"))
-	stream.Send([]byte("this isn't sent becauset here are no connections"))
+	stream.Send([]byte("this isn't sent because there are no connections"))
 	stream.Enqueue([]byte("second,"))
 
 	WithServer(handler, func(server *httptest.Server) {

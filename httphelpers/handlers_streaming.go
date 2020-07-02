@@ -184,6 +184,8 @@ func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, r *http.R
 		flusher.Flush()
 	}
 
+	flusher.Flush()
+
 	var closeNotifyCh <-chan bool
 	// CloseNotifier is deprecated but there's no way to use Context in this case
 	if closeNotifier, ok := w.(http.CloseNotifier); ok { //nolint:megacheck
