@@ -10,14 +10,6 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:fb312f870b330e589857c4e4497b7782c3bf66f832b7d256d6993e6424bae168"
-  name = "github.com/launchdarkly/eventsource"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "6b837031c9caed93dbd5ecee9bd1f48ad4b91c1d"
-  version = "1.2.0"
-
-[[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
@@ -37,14 +29,6 @@
   version = "v1.5.1"
 
 [[projects]]
-  digest = "1:797d10f97b03b3580492b34e3a1cb2608a1d905307a002341e4b957c1b92d0ab"
-  name = "gopkg.in/launchdarkly/go-sdk-common.v1"
-  packages = ["ldvalue"]
-  pruneopts = "UT"
-  revision = "d48d1b4f4e7043144f7344be8a94cb3e3cd84275"
-  version = "1.0.0"
-
-[[projects]]
   digest = "1:55b110c99c5fdc4f14930747326acce56b52cfce60b24b1c03ef686ac0e46bb1"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -56,10 +40,8 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/launchdarkly/eventsource",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/require",
-    "gopkg.in/launchdarkly/go-sdk-common.v1/ldvalue",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

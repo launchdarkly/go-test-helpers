@@ -2,7 +2,6 @@ package httphelpers
 
 import (
 	"bytes"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -187,21 +186,19 @@ func TestSequentialHandler(t *testing.T) {
 	assert.Equal(t, 400, rr3.Code)
 }
 
-func TestPanicHandler(t *testing.T) {
-	err := errors.New("sorry")
-	ph := PanicHandler(err)
+func TestBrokenConnectionHandler(t *testing.T) {
+	h := BrokenConnectionHandler()
 
-	var panicked interface{}
-	func() {
-		defer func() {
-			if r := recover(); r != nil {
-				panicked = r
-			}
-		}()
-		req, _ := http.NewRequest("GET", "/", nil)
-		rr := httptest.NewRecorder()
-		ph.ServeHTTP(rr, req)
-	}()
+	t.Run("with instrumented client", func(t *testing.T) {
+		client := ClientFromHandler(h)
+		_, err := client.Get("/")
+		assert.Error(t, err)
+	})
 
-	assert.Equal(t, err, panicked)
+	t.Run("with server", func(t *testing.T) {
+		WithServer(h, func(server *httptest.Server) {
+			_, err := http.DefaultClient.Get(server.URL)
+			assert.Error(t, err)
+		})
+	})
 }

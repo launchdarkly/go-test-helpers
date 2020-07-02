@@ -13,7 +13,7 @@ func TestFlagOrSegment(t *testing.T) {
 
 	bytes, err := json.Marshal(f)
 	assert.NoError(t, err)
-	assertJSONEqual(t, `{"key":"my-key","version":2}`, string(bytes))
+	assert.JSONEq(t, `{"key":"my-key","version":2}`, string(bytes))
 }
 
 func TestEmptyServerSDKData(t *testing.T) {
@@ -21,7 +21,7 @@ func TestEmptyServerSDKData(t *testing.T) {
 	data := NewServerSDKData()
 	bytes, err := json.Marshal(data)
 	assert.NoError(t, err)
-	assertJSONEqual(t, expectedJSON, string(bytes))
+	assert.JSONEq(t, expectedJSON, string(bytes))
 }
 
 func TestSDKDataWithFlagsAndSegments(t *testing.T) {
@@ -55,5 +55,5 @@ func TestSDKDataWithFlagsAndSegments(t *testing.T) {
 	}`
 	bytes, err := json.Marshal(data)
 	assert.NoError(t, err)
-	assertJSONEqual(t, expectedJSON, string(bytes))
+	assert.JSONEq(t, expectedJSON, string(bytes))
 }

@@ -22,19 +22,6 @@ func TestClientFromHandler(t *testing.T) {
 }
 
 func TestClientFromHandlerConvertsPanicToError(t *testing.T) {
-	myError := errors.New("sorry")
-	handler := PanicHandler(myError)
-	client := ClientFromHandler(handler)
-
-	resp, err := client.Get("/")
-
-	expectedError := &url.Error{Op: "Get", URL: "/", Err: myError}
-	require.Error(t, err)
-	require.Nil(t, resp)
-	assert.Equal(t, expectedError, err)
-}
-
-func TestClientFromHandlerConvertsPanicWithArbitraryValueToError(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		panic("sorry")
 	})
