@@ -1,10 +1,12 @@
 # LaunchDarkly Go Test Helpers
 
-[![Circle CI](https://circleci.com/gh/launchdarkly/go-test-helpers.svg?style=svg)](https://circleci.com/gh/launchdarkly/go-test-helpers)
+[![Circle CI](https://circleci.com/gh/launchdarkly/go-test-helpers.svg?style=svg)](https://circleci.com/gh/launchdarkly/go-test-helpers) [![Documentation](https://img.shields.io/static/v1?label=go.dev&message=reference&color=00add8)](https://pkg.go.dev/github.com/launchdarkly/go-test-helpers)
 
-This package centralizes some test support code that is used by LaunchDarkly's Go SDK and related components, and that may be useful in other Go projects.
+This project centralizes some test support code that is used by LaunchDarkly's Go SDK and related components, and that may be useful in other Go projects.
 
 While this code may be useful in other projects, it is primarily geared toward LaunchDarkly's own development needs and is not meant to provide a large general-purpose framework. It is meant for unit test code and should not be used as a runtime dependency.
+
+This version of the project requires Go 1.13 or higher.
 
 ## Contents
 
@@ -22,10 +24,10 @@ Import any of these packages in your test code:
 
 ```go
 import (
-    "github.com/launchdarkly/go-test-helpers"
-    "github.com/launchdarkly/go-test-helpers/httphelpers"
-    "github.com/launchdarkly/go-test-helpers/ldservices"
-    "github.com/launchdarkly/go-test-helpers/testbox"
+    "github.com/launchdarkly/go-test-helpers/v2"
+    "github.com/launchdarkly/go-test-helpers/v2/httphelpers"
+    "github.com/launchdarkly/go-test-helpers/v2/ldservices"
+    "github.com/launchdarkly/go-test-helpers/v2/testbox"
 )
 ```
 

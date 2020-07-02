@@ -10,7 +10,6 @@ All notable changes to the project will be documented in this file. This project
 ### Added:
 - Added `go.mod` so this package can be consumed as a module. This does not affect code that is currently consuming it via `go get`, `dep`, or `govendor`.
 
-
 ## [1.1.2] - 2020-04-01
 ### Fixed:
 - Patch event type for client-side streams.

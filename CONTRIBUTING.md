@@ -12,7 +12,7 @@ We encourage pull requests and other contributions from the community. Before su
  
 ### Prerequisites
  
-This project should be built against Go 1.8 or newer.
+This project should be built against Go 1.13 or newer.
 
 ### Building
 
