@@ -13,8 +13,7 @@ clean:
 	go clean
 
 test: build
-	@# Note, we need to specify all these packages individually for go test in order to remain 1.8-compatible
-	go test -race -v . ./httphelpers ./ldservices
+	go test -race -v ./...
 
 $(LINTER_VERSION_FILE):
 	rm -f $(LINTER)
@@ -22,5 +21,4 @@ $(LINTER_VERSION_FILE):
 	touch $(LINTER_VERSION_FILE)
 
 lint: $(LINTER_VERSION_FILE)
-	go get ./...
 	$(LINTER) run ./...
