@@ -16,6 +16,10 @@ type SSEEvent struct {
 
 	// Data is the message data.
 	Data string
+
+	// RetryMillis is an optional field that changes the client's reconnection delay to the specified number
+	// of milliseconds. If zero or negative, the field will not be sent.
+	RetryMillis int
 }
 
 // Bytes returns the stream data for the event.
@@ -26,6 +30,9 @@ func (e SSEEvent) Bytes() []byte {
 	}
 	if e.Event != "" {
 		buf.WriteString(fmt.Sprintf("event: %s\n", e.Event))
+	}
+	if e.RetryMillis > 0 {
+		buf.WriteString(fmt.Sprintf("retry: %d\n", e.RetryMillis))
 	}
 	buf.WriteString(fmt.Sprintf("data: %s\n\n", e.Data))
 	return buf.Bytes()
