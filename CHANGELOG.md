@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.1.0] - 2020-07-06
+### Added:
+- In `httphelpers.SSEStreamControl`: `EnqueueComment` and `SendComment`.
+
 ## [2.0.1] - 2020-07-02
 ### Fixed:
 - Fixed a bug in `ChunkedStreamingHandler` that caused the response to hang before reading the headers if there was no initial data in the stream.
