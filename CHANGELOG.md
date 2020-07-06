@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.2.0] - 2020-07-06
+### Added:
+- Added `RetryMillis` field to `httphelpers.SSEEvent`.
+
 ## [2.1.0] - 2020-07-06
 ### Added:
 - In `httphelpers.SSEStreamControl`: `EnqueueComment` and `SendComment`.
