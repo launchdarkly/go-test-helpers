@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   - docker:
-      image: golang:1.14-buster
+      image: golang:1.13-buster
     template:
       name: go
     env:
