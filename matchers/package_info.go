@@ -23,5 +23,4 @@
 //             m.JSONProperty("kind").Should(m.Not(m.Equal("summary"))))
 //     }
 //
-
 package matchers
