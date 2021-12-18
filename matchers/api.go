@@ -5,21 +5,6 @@ import (
 	"reflect"
 )
 
-// TestingT is an interface for any test scope type that has an Errorf method for reporting
-// failures. This is compatible with Go's testing.T, and with assert.TestingT. See
-// AssertThat.
-type TestingT interface {
-	Errorf(format string, args ...interface{})
-}
-
-// RequireT is an interface for any test scope type that has an Errorf method for reporting
-// failures and also a FailNow method for stopping the test immediately. This is compatible
-// with Go's testing.T, and with require.TestingT. See RequireThat.
-type RequireT interface {
-	TestingT
-	FailNow()
-}
-
 // TestFunc is a function used in defining a new Matcher. It returns true if the value passes
 // the test or false for failure.
 type TestFunc func(value interface{}) bool
@@ -91,30 +76,6 @@ func (m Matcher) describeFailure(value interface{}) string {
 		return m.describeFailureFn(value)
 	}
 	return m.describeTest()
-}
-
-// AssertThat is for use with any test framework that has a test scope type with the same Errorf
-// method as Go's testing.T. It tests a value against a matcher and, on failure, calls the test
-// scope's Errorf method. This logs a failure but does not stop the test.
-func AssertThat(t TestingT, value interface{}, matcher Matcher) bool {
-	if pass, desc := matcher.Test(value); !pass {
-		t.Errorf("%s", desc)
-		return false
-	}
-	return true
-}
-
-// RequireThat is for use with any test framework that has a test scope type with the same Errorf
-// and FailNow methods as Go's testing.T. It tests a value against a matcher and, on failure, calls
-// the test scope's Errorf method and then FailNow. This logs a failure and immediately terminates
-// the test.
-func RequireThat(t RequireT, value interface{}, matcher Matcher) bool {
-	if pass, desc := matcher.Test(value); !pass {
-		t.Errorf("%s", desc)
-		t.FailNow()
-		return false // does not return since FailNow() will force an early exit
-	}
-	return true
 }
 
 // EnsureType adds type safety to a matcher. The valueOfType parameter should be any value of the

@@ -23,6 +23,10 @@ import (
 //
 // If the type is json.RawMessage, it is passed to jsonhelpers.CanonicalizeJSON.
 //
+// If the type is a slice or array, it is formatted as [value1, value2, value3] (unlike
+// Go's default formatting which has no commas) and each value is recursively formatted
+// with DescribeValue.
+//
 // At last resort, it is formatted with fmt.Sprintf("%+v").
 func DescribeValue(value interface{}) string {
 	if isJSONTaggedStruct(value) {
@@ -44,6 +48,14 @@ func DescribeValue(value interface{}) string {
 	case json.RawMessage:
 		return string(jsonhelpers.CanonicalizeJSON(v))
 	default:
+		rv := reflect.ValueOf(value)
+		if rv.Type().Kind() == reflect.Array || rv.Type().Kind() == reflect.Slice {
+			parts := make([]string, 0, rv.Len())
+			for i := 0; i < rv.Len(); i++ {
+				parts = append(parts, DescribeValue(rv.Index(i).Interface()))
+			}
+			return "[" + strings.Join(parts, ", ") + "]"
+		}
 		return fmt.Sprintf("%+v", value)
 	}
 }

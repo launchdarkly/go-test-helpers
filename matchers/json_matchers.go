@@ -17,7 +17,7 @@ import (
 // it will be first serialized to JSON with json.Marshal and then parsed. Then the parsed values
 // or data structures are tested for deep equality. For instance, this test passes:
 //
-//     matchers.AssertThat(t, []byte(`{"a": true, "b": false`),
+//     matchers.In(t).Assert([]byte(`{"a": true, "b": false`),
 //         matchers.JSONEqual(map[string]bool{b: false, a: true}))
 //
 // The shortcut JSONEqualStr can be used to avoid writing []byte() if the expected value is
@@ -64,7 +64,7 @@ func JSONEqual(expectedValue interface{}) Matcher {
 // to JSONEqual would cause that value to be serialized in the way JSON represents strings,
 // that is, with quoting and escaping.
 //
-//     matchers.AssertThat(t, `{"a": true, "b": false`,
+//     matchers.In(t).Assert(`{"a": true, "b": false`,
 //         matchers.JSONStrEqual(`{"b": false, "a": true}`)
 func JSONStrEqual(expectedValue string) Matcher {
 	return Transform("", func(value interface{}) (interface{}, error) {
@@ -79,25 +79,21 @@ func JSONStrEqual(expectedValue string) Matcher {
 // and applies a matcher to that property. It fails if no such property exists.
 //
 //     myObject := []byte(`{"a": {"b": 2}}`)
-//     matchers.AssertThat(t, myObject,
+//     matchers.In(t).Assert(myObject,
 //         matchers.JSONProperty("a").Should(
 //             matchers.JSONProperty("b").Should(Equal(2))))
 func JSONProperty(name string) MatcherTransform {
 	return Transform(
-		"JSON property "+name,
+		fmt.Sprintf("JSON property %q", name),
 		func(value interface{}) (interface{}, error) {
-			valueIntf, err := toJSONInterface(value)
+			m, err := toJSONObjectMap(value)
 			if err != nil {
 				return nil, err
 			}
-			if m, ok := valueIntf.(map[string]interface{}); ok {
-				if propValue, ok := m[name]; ok {
-					return propValue, nil
-				}
-				return nil, fmt.Errorf("wanted JSON property %q but it did not exist", name)
+			if propValue, ok := m[name]; ok {
+				return propValue, nil
 			}
-			return nil, fmt.Errorf("wanted a JSON object but got %T for %+v", valueIntf, value)
-			// return nil, errors.New("wanted a JSON object but found a different type")
+			return nil, fmt.Errorf("JSON property %q did not exist", name)
 		},
 	)
 }
@@ -106,16 +102,13 @@ func JSONProperty(name string) MatcherTransform {
 // as a nil value rather than error.
 func JSONOptProperty(name string) MatcherTransform {
 	return Transform(
-		"JSON property "+name,
+		fmt.Sprintf("JSON property %q", name),
 		func(value interface{}) (interface{}, error) {
-			value, err := toJSONInterface(value)
+			m, err := toJSONObjectMap(value)
 			if err != nil {
 				return nil, err
 			}
-			if m, ok := value.(map[string]interface{}); ok {
-				return m[name], nil
-			}
-			return nil, errors.New("wanted a JSON object but found a different type")
+			return m[name], nil
 		},
 	)
 }
@@ -139,4 +132,23 @@ func toJSONInterface(value interface{}) (interface{}, error) {
 		return nil, fmt.Errorf("value was not valid JSON: %w", err)
 	}
 	return intf, nil
+}
+
+func toJSONObjectMap(value interface{}) (map[string]interface{}, error) {
+	valueIntf, err := toJSONInterface(value)
+	if err != nil {
+		return nil, err
+	}
+	if m, ok := valueIntf.(map[string]interface{}); ok {
+		return m, nil
+	}
+	if s, ok := valueIntf.(string); ok {
+		if strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}") {
+			var m map[string]interface{}
+			if err := json.Unmarshal([]byte(s), &m); err == nil {
+				return m, nil
+			}
+		}
+	}
+	return nil, errors.New("wanted a JSON object but found a different type")
 }

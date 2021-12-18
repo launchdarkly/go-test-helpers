@@ -48,3 +48,25 @@ func TestJSONEqual(t *testing.T) {
 				"\n"+`full value was: {"a":1,"b":3}`)
 	})
 }
+
+func TestJSONProperty(t *testing.T) {
+	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONProperty("b").Should(Equal(2)))
+
+	assertFails(t, []byte(`{"a":1,"b":2}`), JSONProperty("b").Should(Equal(3)),
+		`JSON property "b" did not equal 3`+"\n"+`full value was: {"a":1,"b":2}`)
+
+	assertFails(t, []byte(`{"a":1,"b":2}`), JSONProperty("c").Should(Equal(3)),
+		`JSON property "c" did not exist`+"\n"+`full value was: {"a":1,"b":2}`)
+}
+
+func TestJSONOptProperty(t *testing.T) {
+	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONOptProperty("b").Should(Equal(2)))
+
+	assertFails(t, []byte(`{"a":1,"b":2}`), JSONOptProperty("b").Should(Equal(3)),
+		`JSON property "b" did not equal 3`+"\n"+`full value was: {"a":1,"b":2}`)
+
+	assertFails(t, []byte(`{"a":1,"b":2}`), JSONOptProperty("c").Should(Equal(3)),
+		`JSON property "c" did not equal 3`+"\n"+`full value was: {"a":1,"b":2}`)
+
+	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONOptProperty("c").Should(Equal(nil)))
+}
