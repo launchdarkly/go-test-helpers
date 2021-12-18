@@ -89,6 +89,8 @@ type JSONPathComponent struct {
 
 // JSONDiff compares two JSON values and returns an explanation of how they differ, if at all,
 // ignoring any differences that do not affect the value semantically (such as whitespace).
+// This is for programmatic use; if you want a human-readable test assertion based on the
+// same logic, see matchers.JSONEqual (which calls this function).
 //
 // The two values are provided as marshalled JSON data. If they cannot be parsed, the
 // function immediately returns an error.
