@@ -3,7 +3,6 @@ package matchers
 import (
 	"fmt"
 	"reflect"
-	"strings"
 )
 
 // Equal is a matcher that tests whether the input value matches the expected value according
@@ -18,6 +17,30 @@ func Equal(expectedValue interface{}) Matcher {
 		},
 		func(value interface{}) string {
 			return fmt.Sprintf("did not equal %s", DescribeValue(expectedValue))
+		},
+	)
+}
+
+// BeNil is a matcher that passes if the value is a nil interface value, a nil pointer, a
+// nil slice, or a nil map.
+func BeNil() Matcher {
+	return New(
+		func(value interface{}) bool {
+			if value == nil {
+				return true
+			}
+			rv := reflect.ValueOf(value)
+			switch rv.Type().Kind() {
+			case reflect.Ptr, reflect.Slice, reflect.Map:
+				return rv.IsNil()
+			}
+			return false
+		},
+		func() string {
+			return "is nil"
+		},
+		func(value interface{}) string {
+			return "was not nil"
 		},
 	)
 }
@@ -38,20 +61,4 @@ func canonicalizeValue(value interface{}) interface{} {
 		return float64(v)
 	}
 	return value
-}
-
-// StringContains is a matcher for string values that tests for the presence of a substring,
-// case-sensitively.
-func StringContains(substring string) Matcher {
-	return New(
-		func(value interface{}) bool {
-			return strings.Contains(value.(string), substring)
-		},
-		func() string {
-			return fmt.Sprintf("contains %q", substring)
-		},
-		func(interface{}) string {
-			return fmt.Sprintf("did not contain %q", substring)
-		},
-	).EnsureType("")
 }

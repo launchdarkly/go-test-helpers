@@ -12,6 +12,8 @@ import (
 // DescribeValue tries to create attractive string representations of values for test
 // failure messages. The logic is as follows (whichever comes first):
 //
+// If the value is nil, it returns "nil".
+//
 // If the type is a struct that has "json" field tags, it is converted to JSON.
 //
 // If the type implements fmt.Stringer, its String method is called.
@@ -29,6 +31,9 @@ import (
 //
 // At last resort, it is formatted with fmt.Sprintf("%+v").
 func DescribeValue(value interface{}) string {
+	if value == nil {
+		return "nil"
+	}
 	if isJSONTaggedStruct(value) {
 		return string(jsonhelpers.CanonicalizeJSON(jsonhelpers.ToJSON(value)))
 	}

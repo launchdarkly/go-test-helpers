@@ -56,7 +56,7 @@ func TestJSONProperty(t *testing.T) {
 		`JSON property "b" did not equal 3`+"\n"+`full value was: {"a":1,"b":2}`)
 
 	assertFails(t, []byte(`{"a":1,"b":2}`), JSONProperty("c").Should(Equal(3)),
-		`JSON property "c" did not exist`+"\n"+`full value was: {"a":1,"b":2}`)
+		`JSON property "c" not found`+"\n"+`full value was: {"a":1,"b":2}`)
 }
 
 func TestJSONOptProperty(t *testing.T) {

@@ -76,7 +76,8 @@ func JSONStrEqual(expectedValue string) Matcher {
 }
 
 // JSONProperty is a MatcherTransform that takes a JSON object, gets a named property from it,
-// and applies a matcher to that property. It fails if no such property exists.
+// and applies a matcher to that property. It fails if no such property exists (see
+// OptJSONProperty).
 //
 //     myObject := []byte(`{"a": {"b": 2}}`)
 //     matchers.In(t).Assert(myObject,
@@ -93,7 +94,7 @@ func JSONProperty(name string) MatcherTransform {
 			if propValue, ok := m[name]; ok {
 				return propValue, nil
 			}
-			return nil, fmt.Errorf("JSON property %q did not exist", name)
+			return nil, fmt.Errorf("JSON property %q not found", name)
 		},
 	)
 }

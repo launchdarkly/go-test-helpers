@@ -2,6 +2,8 @@ package matchers
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,7 +24,11 @@ func assertPasses(t *testing.T, value interface{}, m Matcher) {
 func assertFails(t *testing.T, value interface{}, m Matcher, expectedDesc string) {
 	pass, desc := m.Test(value)
 	assert.False(t, pass)
-	assert.Equal(t, expectedDesc, desc)
+	if strings.Contains(expectedDesc, "full value was:") {
+		assert.Equal(t, expectedDesc, desc)
+	} else {
+		assert.Regexp(t, regexp.MustCompile("^"+regexp.QuoteMeta(expectedDesc)), desc)
+	}
 }
 
 func TestUninitializedMatcher(t *testing.T) {

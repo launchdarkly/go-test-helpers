@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -138,4 +139,61 @@ func getSliceOrArrayElementValues(sliceValue interface{}) ([]interface{}, error)
 		ret = append(ret, v.Index(i).Interface())
 	}
 	return ret, nil
+}
+
+// ValueForKey is a MatcherTransform that takes a map, looks up a value in it by key,
+// and applies a matcher to that value. It fails if no such key exists (see
+// OptValueForKey).
+//
+//     myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
+//     matchers.In(t).Assert(myObject,
+//         matchers.ValueForKey("a").Should(
+//             matchers.ValueForKey("b").Should(Equal(2))))
+func ValueForKey(key interface{}) MatcherTransform {
+	return Transform(
+		fmt.Sprintf("for key %s", DescribeValue(key)),
+		func(value interface{}) (interface{}, error) {
+			if value == nil {
+				return nil, errors.New("map was nil")
+			}
+			rv := reflect.ValueOf(value)
+			if rv.Type().Kind() != reflect.Map {
+				return nil, fmt.Errorf("expected a map but got %T", value)
+			}
+			for _, k := range rv.MapKeys() {
+				if k.Interface() == key {
+					return rv.MapIndex(k).Interface(), nil
+				}
+			}
+			return nil, fmt.Errorf("map key %s not found", DescribeValue(key))
+		},
+	)
+}
+
+// OptValueForKey is a MatcherTransform that takes a map, looks up a value in it by key,
+// and applies a matcher to that value. If no such key exists, it returns the zero
+// value for the type. If the map was nil, it returns nil.
+//
+//     myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
+//     matchers.In(t).Assert(myObject,
+//         matchers.OptValueForKey("a").Should(
+//             matchers.OptValueForKey("c").Should(Equal(0))))
+func OptValueForKey(key interface{}) MatcherTransform {
+	return Transform(
+		fmt.Sprintf("for key %s", DescribeValue(key)),
+		func(value interface{}) (interface{}, error) {
+			if value == nil {
+				return nil, nil
+			}
+			rv := reflect.ValueOf(value)
+			if rv.Type().Kind() != reflect.Map {
+				return nil, fmt.Errorf("expected a map but got %T", value)
+			}
+			result := rv.MapIndex(reflect.ValueOf(key))
+			if !result.IsValid() {
+				return reflect.Zero(rv.Type().Elem()).Interface(), nil
+			}
+			return result.Interface(), nil
+		},
+	)
 }
