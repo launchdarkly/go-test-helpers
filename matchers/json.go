@@ -124,13 +124,13 @@ func toJSONInterface(value interface{}) (interface{}, error) {
 	default:
 		d, err := json.Marshal(value)
 		if err != nil {
-			return nil, fmt.Errorf("value could not be marshalled to JSON: %w", err)
+			return nil, fmt.Errorf("value could not be marshalled to JSON: %s", err)
 		}
 		data = d
 	}
 	var intf interface{}
 	if err := json.Unmarshal(data, &intf); err != nil {
-		return nil, fmt.Errorf("value was not valid JSON: %w", err)
+		return nil, fmt.Errorf("value was not valid JSON: %s", err)
 	}
 	return intf, nil
 }
