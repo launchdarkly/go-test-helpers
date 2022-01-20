@@ -41,8 +41,9 @@ func AllOf(matchers ...Matcher) Matcher {
 	)
 }
 
-// AnyOf requires that the input value does not fail any of the specified Matchers. If it fails,
-// the failure message describes all of the Matchers that failed.
+// AnyOf requires that the input value passes at least one of the specified Matchers. It will
+// not execute any further matches after the first pass. If it fails all of them, the failure
+// message describes all of the failure conditions.
 func AnyOf(matchers ...Matcher) Matcher {
 	return New(
 		func(value interface{}) bool {
