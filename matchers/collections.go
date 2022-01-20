@@ -175,7 +175,7 @@ func ValueForKey(key interface{}) MatcherTransform {
 // value for the type. If the map was nil, it returns nil.
 //
 //     myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
-//     matchers.In(t).Assert(myObject,
+//     matchers.In(t).Assert(myMap,
 //         matchers.OptValueForKey("a").Should(
 //             matchers.OptValueForKey("c").Should(Equal(0))))
 func OptValueForKey(key interface{}) MatcherTransform {
