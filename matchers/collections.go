@@ -8,10 +8,15 @@ import (
 	"strings"
 )
 
-// KeyValue is used with MapOf or MapIncluding to describe a matcher for a key-value pair in a map.
-type KeyValue struct {
+// KeyValueMatcher is used with MapOf or MapIncluding to describe a matcher for a key-value pair in a map.
+type KeyValueMatcher struct {
 	Key   interface{}
 	Value Matcher
+}
+
+// KV is a shortcut for constructing a KeyValueMatcher for use with MapOf or MapIncluding.
+func KV(key interface{}, valueMatcher Matcher) KeyValueMatcher {
+	return KeyValueMatcher{Key: key, Value: valueMatcher}
 }
 
 // Items is a matcher for a slice or array value. It tests that the number of elements is equal to
@@ -141,10 +146,10 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 //
 //     m := map[string]int{"a": 6, "b": 2}
 //     matchers.MapOf(
-//         matchers.KeyValue{"a", matchers.Equal(2)},
-//         matchers.KeyValue{"b", matchers.Equal(6)},
+//         matchers.KV("a", matchers.Equal(2)),
+//         matchers.KV("b", matchers.Equal(6)),
 //     }).Test(s) // pass
-func MapOf(keyValueMatchers ...KeyValue) Matcher {
+func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
 		func(value interface{}) bool {
 			valueAsMap, err := getMapValues(value)
@@ -199,10 +204,10 @@ func MapOf(keyValueMatchers ...KeyValue) Matcher {
 //
 //     m := map[string]int{"a": 6, "b": 2}
 //     matchers.MapOf(
-//         matchers.KeyValue{"a", matchers.Equal(2)},
-//         matchers.KeyValue{"b", matchers.Equal(6)},
+//         matchers.KV("a", matchers.Equal(2)),
+//         matchers.KV("b", matchers.Equal(6)),
 //     }).Test(s) // pass
-func MapIncluding(keyValueMatchers ...KeyValue) Matcher {
+func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
 		func(value interface{}) bool {
 			valueAsMap, err := getMapValues(value)
@@ -271,7 +276,7 @@ func getMapValues(mapValue interface{}) (map[interface{}]interface{}, error) {
 	return ret, nil
 }
 
-func getSortedExpectedKeys(keyValueMatchers []KeyValue) []string {
+func getSortedExpectedKeys(keyValueMatchers []KeyValueMatcher) []string {
 	ret := make([]string, 0, len(keyValueMatchers))
 	for _, kv := range keyValueMatchers {
 		ret = append(ret, fmt.Sprintf("%v", kv.Key))

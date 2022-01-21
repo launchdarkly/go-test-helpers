@@ -50,17 +50,17 @@ func TestMapOf(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2}
 
 	assertPasses(t, m, MapOf(
-		KeyValue{"b", Equal(2)},
-		KeyValue{"a", Equal(1)},
+		KV("b", Equal(2)),
+		KV("a", Equal(1)),
 	))
 
 	assertFails(t, m, MapOf(
-		KeyValue{"b", Equal(3)},
-		KeyValue{"a", Equal(1)},
+		KV("b", Equal(3)),
+		KV("a", Equal(1)),
 	), `key [b] did not equal 3`)
 
 	assertFails(t, m, MapOf(
-		KeyValue{"b", Equal(2)},
+		KV("b", Equal(2)),
 	), `expected map keys [b] but got map keys [a b]`)
 }
 
@@ -68,23 +68,23 @@ func TestMapIncluding(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2}
 
 	assertPasses(t, m, MapIncluding(
-		KeyValue{"b", Equal(2)},
-		KeyValue{"a", Equal(1)},
+		KV("b", Equal(2)),
+		KV("a", Equal(1)),
 	))
 
 	assertPasses(t, m, MapIncluding(
-		KeyValue{"b", Equal(2)},
+		KV("b", Equal(2)),
 	))
 
 	assertFails(t, m, MapIncluding(
-		KeyValue{"b", Equal(3)},
-		KeyValue{"a", Equal(1)},
+		KV("b", Equal(3)),
+		KV("a", Equal(1)),
 	), `key [b] did not equal 3`)
 
 	assertFails(t, m, MapIncluding(
-		KeyValue{"c", Equal(3)},
-		KeyValue{"b", Equal(2)},
-		KeyValue{"a", Equal(1)},
+		KV("c", Equal(3)),
+		KV("b", Equal(2)),
+		KV("a", Equal(1)),
 	), `key [c] not found`)
 }
 
