@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.3.0] - 2022-01-21
+### Added:
+- Subpackages `jsonhelpers` and `matchers`.
+
 ## [2.2.0] - 2020-07-06
 ### Added:
 - Added `RetryMillis` field to `httphelpers.SSEEvent`.
