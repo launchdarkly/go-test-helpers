@@ -46,6 +46,48 @@ func TestItemsInAnyOrder(t *testing.T) {
 		`no items were found to match: (equal to "a"), (equal to "b"), (equal to "c")`)
 }
 
+func TestMapOf(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2}
+
+	assertPasses(t, m, MapOf(
+		KeyValue{"b", Equal(2)},
+		KeyValue{"a", Equal(1)},
+	))
+
+	assertFails(t, m, MapOf(
+		KeyValue{"b", Equal(3)},
+		KeyValue{"a", Equal(1)},
+	), `key [b] did not equal 3`)
+
+	assertFails(t, m, MapOf(
+		KeyValue{"b", Equal(2)},
+	), `expected map keys [b] but got map keys [a b]`)
+}
+
+func TestMapIncluding(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2}
+
+	assertPasses(t, m, MapIncluding(
+		KeyValue{"b", Equal(2)},
+		KeyValue{"a", Equal(1)},
+	))
+
+	assertPasses(t, m, MapIncluding(
+		KeyValue{"b", Equal(2)},
+	))
+
+	assertFails(t, m, MapIncluding(
+		KeyValue{"b", Equal(3)},
+		KeyValue{"a", Equal(1)},
+	), `key [b] did not equal 3`)
+
+	assertFails(t, m, MapIncluding(
+		KeyValue{"c", Equal(3)},
+		KeyValue{"b", Equal(2)},
+		KeyValue{"a", Equal(1)},
+	), `key [c] not found`)
+}
+
 func TestValueForKey(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2}
 

@@ -75,9 +75,9 @@ func JSONStrEqual(expectedValue string) Matcher {
 	}).Should(JSONEqual([]byte(expectedValue)))
 }
 
-// JSONProperty is a MatcherTransform that takes a JSON object, gets a named property from it,
-// and applies a matcher to that property. It fails if no such property exists (see
-// OptJSONProperty).
+// JSONProperty is a MatcherTransform that takes any value serializable as a JSON object
+// and gets a named property from it; then you can apply a matcher to the value of that
+// property. It fails if no such property exists (see OptJSONProperty).
 //
 //     myObject := []byte(`{"a": {"b": 2}}`)
 //     matchers.In(t).Assert(myObject,
@@ -110,6 +110,41 @@ func JSONOptProperty(name string) MatcherTransform {
 				return nil, err
 			}
 			return m[name], nil
+		},
+	)
+}
+
+// JSONArray is a MatcherTransform that takes any value serializable as a JSON array, and converts
+// it to []interface{} slice; then you can apply a matcher to that slice. It fails if the value is
+// not serializable as a JSON array.
+func JSONArray() MatcherTransform {
+	return Transform(
+		"JSON array",
+		func(value interface{}) (interface{}, error) {
+			v, err := toJSONInterface(value)
+			if err != nil {
+				return nil, err
+			}
+			if s, ok := v.([]interface{}); ok {
+				return s, nil
+			}
+			return nil, errors.New("wanted a JSON array but found a different type")
+		},
+	)
+}
+
+// JSONMap is a MatcherTransform that takes any value serializable as a JSON object, and converts
+// it to a map[interface{}]interface{}; then you can apply a matcher to that map. It fails if the
+// value is not serializable as a JSON object.
+func JSONMap() MatcherTransform {
+	return Transform(
+		"JSON map",
+		func(value interface{}) (interface{}, error) {
+			m, err := toJSONObjectMap(value)
+			if err != nil {
+				return nil, err
+			}
+			return m, nil
 		},
 	)
 }

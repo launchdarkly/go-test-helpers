@@ -4,8 +4,15 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 )
+
+// KeyValue is used with MapOf or MapIncluding to describe a matcher for a key-value pair in a map.
+type KeyValue struct {
+	Key   interface{}
+	Value Matcher
+}
 
 // Items is a matcher for a slice or array value. It tests that the number of elements is equal to
 // the number of matchers, and that each element matches the corresponding matcher in order.
@@ -129,6 +136,117 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 	)
 }
 
+// MapOf is a matcher for a map value. It tests that the map has exactly the same keys as the
+// specified list, and that the matcher for each key is satisfied by the corresponding value.
+//
+//     m := map[string]int{"a": 6, "b": 2}
+//     matchers.MapOf(
+//         matchers.KeyValue{"a", matchers.Equal(2)},
+//         matchers.KeyValue{"b", matchers.Equal(6)},
+//     }).Test(s) // pass
+func MapOf(keyValueMatchers ...KeyValue) Matcher {
+	return New(
+		func(value interface{}) bool {
+			valueAsMap, err := getMapValues(value)
+			if err != nil || len(valueAsMap) != len(keyValueMatchers) {
+				return false
+			}
+			for _, kv := range keyValueMatchers {
+				if elementValue, ok := valueAsMap[kv.Key]; ok {
+					if !kv.Value.test(elementValue) {
+						return false
+					}
+				} else {
+					return false
+				}
+			}
+			return true
+		},
+		func() string {
+			var parts []string
+			for _, kv := range keyValueMatchers {
+				parts = append(parts, fmt.Sprintf("%s: %s", kv.Key, kv.Value.describeTest()))
+			}
+			return "map: {" + strings.Join(parts, ", ") + "}"
+		},
+		func(value interface{}) string {
+			valueAsMap, err := getMapValues(value)
+			if err != nil {
+				return err.Error()
+			}
+			if len(valueAsMap) != len(keyValueMatchers) {
+				return fmt.Sprintf("expected map keys %v but got map keys %v", getSortedExpectedKeys(keyValueMatchers),
+					getSortedMapKeys(valueAsMap))
+			}
+			parts := make([]string, 0, len(keyValueMatchers))
+			for _, kv := range keyValueMatchers {
+				if elementValue, ok := valueAsMap[kv.Key]; ok {
+					if !kv.Value.test(elementValue) {
+						parts = append(parts, fmt.Sprintf("key [%s] %s", kv.Key, kv.Value.describeFailure(elementValue)))
+					}
+				} else {
+					parts = append(parts, fmt.Sprintf("key [%s] not found", kv.Key))
+				}
+			}
+			return strings.Join(parts, ", ")
+		},
+	)
+}
+
+// MapIncluding is a matcher for a map value. It tests that the map contains all of the keys in
+// the specified list, and that the matcher for each key is satisfied by the corresponding value.
+// The map may also contain additional keys.
+//
+//     m := map[string]int{"a": 6, "b": 2}
+//     matchers.MapOf(
+//         matchers.KeyValue{"a", matchers.Equal(2)},
+//         matchers.KeyValue{"b", matchers.Equal(6)},
+//     }).Test(s) // pass
+func MapIncluding(keyValueMatchers ...KeyValue) Matcher {
+	return New(
+		func(value interface{}) bool {
+			valueAsMap, err := getMapValues(value)
+			if err != nil {
+				return false
+			}
+			for _, kv := range keyValueMatchers {
+				if elementValue, ok := valueAsMap[kv.Key]; ok {
+					if !kv.Value.test(elementValue) {
+						return false
+					}
+				} else {
+					return false
+				}
+			}
+			return true
+		},
+		func() string {
+			var parts []string
+			for _, kv := range keyValueMatchers {
+				parts = append(parts, fmt.Sprintf("%s: %s", kv.Key, kv.Value.describeTest()))
+			}
+			return "map including: {" + strings.Join(parts, ", ") + "}"
+		},
+		func(value interface{}) string {
+			valueAsMap, err := getMapValues(value)
+			if err != nil {
+				return err.Error()
+			}
+			parts := make([]string, 0, len(keyValueMatchers))
+			for _, kv := range keyValueMatchers {
+				if elementValue, ok := valueAsMap[kv.Key]; ok {
+					if !kv.Value.test(elementValue) {
+						parts = append(parts, fmt.Sprintf("key [%s] %s", kv.Key, kv.Value.describeFailure(elementValue)))
+					}
+				} else {
+					parts = append(parts, fmt.Sprintf("key [%s] not found", kv.Key))
+				}
+			}
+			return strings.Join(parts, ", ")
+		},
+	)
+}
+
 func getSliceOrArrayElementValues(sliceValue interface{}) ([]interface{}, error) {
 	v := reflect.ValueOf(sliceValue)
 	if v.Type().Kind() != reflect.Slice && v.Type().Kind() != reflect.Array {
@@ -139,6 +257,40 @@ func getSliceOrArrayElementValues(sliceValue interface{}) ([]interface{}, error)
 		ret = append(ret, v.Index(i).Interface())
 	}
 	return ret, nil
+}
+
+func getMapValues(mapValue interface{}) (map[interface{}]interface{}, error) {
+	v := reflect.ValueOf(mapValue)
+	if v.Type().Kind() != reflect.Map {
+		return nil, fmt.Errorf("expected map value but got %T", mapValue)
+	}
+	ret := make(map[interface{}]interface{}, v.Len())
+	for _, k := range v.MapKeys() {
+		ret[k.Interface()] = v.MapIndex(k).Interface()
+	}
+	return ret, nil
+}
+
+func getSortedExpectedKeys(keyValueMatchers []KeyValue) []string {
+	ret := make([]string, 0, len(keyValueMatchers))
+	for _, kv := range keyValueMatchers {
+		ret = append(ret, fmt.Sprintf("%v", kv.Key))
+	}
+	sort.Strings(ret)
+	return ret
+}
+
+func getSortedMapKeys(mapValue interface{}) []string {
+	v := reflect.ValueOf(mapValue)
+	if v.Type().Kind() != reflect.Map {
+		return nil
+	}
+	ret := make([]string, 0, v.Len())
+	for _, k := range v.MapKeys() {
+		ret = append(ret, fmt.Sprintf("%v", k.Interface()))
+	}
+	sort.Strings(ret)
+	return ret
 }
 
 // ValueForKey is a MatcherTransform that takes a map, looks up a value in it by key,

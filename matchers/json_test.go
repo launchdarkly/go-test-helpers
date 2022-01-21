@@ -70,3 +70,21 @@ func TestJSONOptProperty(t *testing.T) {
 
 	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONOptProperty("c").Should(Equal(nil)))
 }
+
+func TestJSONArray(t *testing.T) {
+	assertPasses(t, []byte(`[true, false]`), JSONArray().Should(Length().Should(Equal(2))))
+
+	assertPasses(t, []byte(`[true, false]`), JSONArray().Should(Items(Equal(true), Equal(false))))
+
+	assertFails(t, []byte(`{"a":1,"b":2}`), JSONArray().Should(Length().Should(Equal(2))),
+		`wanted a JSON array but found a different type`)
+}
+
+func TestJSONMap(t *testing.T) {
+	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONMap().Should(Length().Should(Equal(2))))
+
+	assertPasses(t, []byte(`{"a":1,"b":2}`), JSONMap().Should(ValueForKey("a").Should(Equal(1))))
+
+	assertFails(t, []byte(`[true, false]`), JSONMap().Should(Length().Should(Equal(2))),
+		`wanted a JSON object but found a different type`)
+}
