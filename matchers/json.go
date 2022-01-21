@@ -83,6 +83,8 @@ func JSONStrEqual(expectedValue string) Matcher {
 //     matchers.In(t).Assert(myObject,
 //         matchers.JSONProperty("a").Should(
 //             matchers.JSONProperty("b").Should(Equal(2))))
+//
+// An alternative is to use JSONMap combined with MapOf or MapIncluding.
 func JSONProperty(name string) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("JSON property %q", name),
@@ -117,6 +119,10 @@ func JSONOptProperty(name string) MatcherTransform {
 // JSONArray is a MatcherTransform that takes any value serializable as a JSON array, and converts
 // it to []interface{} slice; then you can apply a matcher to that slice. It fails if the value is
 // not serializable as a JSON array.
+//
+//     myArray := []byte(`["a", "b", "c"]`)
+//     matchers.In(t).Assert(myArray,
+//         matchers.JSONArray().Should(matchers.Length().Should(matchers.Equal(3))))
 func JSONArray() MatcherTransform {
 	return Transform(
 		"JSON array",
@@ -136,6 +142,14 @@ func JSONArray() MatcherTransform {
 // JSONMap is a MatcherTransform that takes any value serializable as a JSON object, and converts
 // it to a map[interface{}]interface{}; then you can apply a matcher to that map. It fails if the
 // value is not serializable as a JSON object.
+//
+//     myArray := []byte(`{"a": 1, "b": "xyz"}`)
+//     matchers.In(t).Assert(myJSON,
+//         matchers.JSONMap().Should(
+//             matchers.MapOf(
+//                 matchers.KV("a", matchers.Equal(1)),
+//                 matchers.KV("b", matchers.StringHasPrefix("x")),
+//             )))
 func JSONMap() MatcherTransform {
 	return Transform(
 		"JSON map",
