@@ -8,6 +8,12 @@ type TestingT interface {
 	FailNow()
 }
 
+// Go's testing.T and other compatible packages provide an additional method, Helper(),
+// which indicates that whatever function called it should not be included in stacktraces.
+type helperT interface {
+	Helper()
+}
+
 // AssertionScope is a context for executing assertions.
 type AssertionScope struct {
 	t      TestingT
@@ -54,6 +60,9 @@ func (a AssertionScope) For(name string) AssertionScope {
 // scope's Errorf method. This logs a failure but does not stop the test.
 func (a AssertionScope) Assert(value interface{}, matcher Matcher) bool {
 	if pass, desc := matcher.Test(value); !pass {
+		if h, ok := a.t.(helperT); ok {
+			h.Helper()
+		}
 		a.fail(desc)
 		return false
 	}
@@ -66,6 +75,9 @@ func (a AssertionScope) Assert(value interface{}, matcher Matcher) bool {
 // the test.
 func (a AssertionScope) Require(value interface{}, matcher Matcher) bool {
 	if pass, desc := matcher.Test(value); !pass {
+		if h, ok := a.t.(helperT); ok {
+			h.Helper()
+		}
 		a.fail(desc)
 		a.t.FailNow()
 		return false // does not return since FailNow() will force an early exit
@@ -74,5 +86,8 @@ func (a AssertionScope) Require(value interface{}, matcher Matcher) bool {
 }
 
 func (a AssertionScope) fail(desc string) {
+	if h, ok := a.t.(helperT); ok {
+		h.Helper()
+	}
 	a.t.Errorf("%s%s", a.prefix, desc)
 }
