@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.3.1] - 2022-02-03
+### Fixed:
+- The `Assert`/`Require` methods in `matchers` now call `t.Helper()` (if that method exists) so the location of the failure will be more accurately reported.
+
 ## [2.3.0] - 2022-01-21
 ### Added:
 - Subpackages `jsonhelpers` and `matchers`.
