@@ -44,6 +44,27 @@ func TestItemsInAnyOrder(t *testing.T) {
 
 	assertFails(t, slice, ItemsInAnyOrder(Equal("a"), Equal("b"), Equal("c")),
 		`no items were found to match: (equal to "a"), (equal to "b"), (equal to "c")`)
+
+	assertFails(t, 2, ItemsInAnyOrder(Equal("x"), Equal("y")),
+		"expected slice or array value but got int\nfull value was: 2")
+}
+
+func TestItemsInclude(t *testing.T) {
+	slice := []string{"y", "z", "x"}
+	array := [3]string{"y", "z", "x"}
+
+	assertPasses(t, slice, ItemsInclude(Equal("x"), Equal("y"), Equal("z")))
+	assertPasses(t, array, ItemsInclude(Equal("x"), Equal("y"), Equal("z")))
+
+	assertPasses(t, slice, ItemsInclude(Equal("y")))
+
+	assertPasses(t, slice, ItemsInclude(Equal("y"), Equal("y")))
+
+	assertFails(t, slice, ItemsInclude(Equal("x"), Equal("q"), Equal("r"), Equal("y")),
+		`no items were found to match: (equal to "q"), (equal to "r")`)
+
+	assertFails(t, 2, ItemsInclude(Equal("x"), Equal("y")),
+		"expected slice or array value but got int\nfull value was: 2")
 }
 
 func TestMapOf(t *testing.T) {

@@ -141,6 +141,50 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 	)
 }
 
+// ItemsInclude is a matcher for a slice or array value. It tests that each matcher in the list of
+// matchers is satisfied by at least one element.
+func ItemsInclude(matchers ...Matcher) Matcher {
+	findUnmatched := func(elements []interface{}) []Matcher {
+		var ret []Matcher
+		for _, m := range matchers {
+			found := false
+			for _, elementValue := range elements {
+				if m.test(elementValue) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				ret = append(ret, m)
+			}
+		}
+		return ret
+	}
+	return New(
+		func(value interface{}) bool {
+			elements, err := getSliceOrArrayElementValues(value)
+			if err != nil {
+				return false
+			}
+			return len(findUnmatched(elements)) == 0
+		},
+		func() string {
+			return "items include: " + describeMatchers(matchers, ", ")
+		},
+		func(value interface{}) string {
+			// Describing a failure for ItemsInclude requires us to repeat the matching logic we
+			// previously executed, but in a bit more detail. For any matcher that successfully
+			// matched an item, we don't need to describe that matcher or that item.
+			elements, err := getSliceOrArrayElementValues(value)
+			if err != nil {
+				return err.Error()
+			}
+			unmatchedMatchers := findUnmatched(elements)
+			return fmt.Sprintf("no items were found to match: %s", describeMatchers(unmatchedMatchers, ", "))
+		},
+	)
+}
+
 // MapOf is a matcher for a map value. It tests that the map has exactly the same keys as the
 // specified list, and that the matcher for each key is satisfied by the corresponding value.
 //
