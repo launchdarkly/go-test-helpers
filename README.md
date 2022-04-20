@@ -16,8 +16,6 @@ Subpackage `httphelpers` provides convenience wrappers for using `net/http` and 
 
 Subpackage `jsonhelpers` provides functions for manipulating JSON.
 
-Subpackage `ldservices` is specifically for testing LaunchDarkly SDK client components; it provides HTTP handlers that simulate the service endpoints used by the SDK.
-
 Subpackage `matchers` contains a test assertion API with combinators.
 
 Subpackage `testbox` provides the ability to write tests-of-tests within the Go testing framework.
