@@ -77,8 +77,8 @@ func MakeServerWithCert(certFilePath, keyFilePath string, handler http.Handler) 
 	server := httptest.NewUnstartedServer(handler)
 	server.TLS = &tls.Config{
 		Certificates: []tls.Certificate{cert},
+		MinVersion:   tls.VersionTLS12,
 	}
-	server.TLS.BuildNameToCertificate()
 	server.StartTLS()
 	return server, nil
 }
@@ -133,7 +133,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	certOut, err := os.Create(certFilePath)
+	certOut, err := os.Create(certFilePath) //nolint:gosec
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600) //nolint:gosec
 	if err != nil {
 		return err
 	}

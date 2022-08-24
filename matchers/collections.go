@@ -22,9 +22,9 @@ func KV(key interface{}, valueMatcher Matcher) KeyValueMatcher {
 // Items is a matcher for a slice or array value. It tests that the number of elements is equal to
 // the number of matchers, and that each element matches the corresponding matcher in order.
 //
-//     s := []int{6,2}
-//     matchers.Items(matchers.Equal(6), matchers.Equal(2)).Test(s) // pass
-//     matchers.Items(matchers.Equal(2), matchers.Equal(6)).Test(s) // fail
+//	s := []int{6,2}
+//	matchers.Items(matchers.Equal(6), matchers.Equal(2)).Test(s) // pass
+//	matchers.Items(matchers.Equal(2), matchers.Equal(6)).Test(s) // fail
 func Items(matchers ...Matcher) Matcher {
 	return New(
 		func(value interface{}) bool {
@@ -66,8 +66,8 @@ func Items(matchers ...Matcher) Matcher {
 // ItemsInAnyOrder is a matcher for a slice or array value. It tests that the number of elements is
 // equal to the number of matchers, and that each matcher matches an element.
 //
-//     s := []int{6,2}
-//     matchers.ItemsInAnyOrder(matchers.Equal(2), matchers.Equal(6)).Test(s) // pass
+//	s := []int{6,2}
+//	matchers.ItemsInAnyOrder(matchers.Equal(2), matchers.Equal(6)).Test(s) // pass
 func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 	return New(
 		func(value interface{}) bool {
@@ -144,11 +144,11 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 // MapOf is a matcher for a map value. It tests that the map has exactly the same keys as the
 // specified list, and that the matcher for each key is satisfied by the corresponding value.
 //
-//     m := map[string]int{"a": 6, "b": 2}
-//     matchers.MapOf(
-//         matchers.KV("a", matchers.Equal(2)),
-//         matchers.KV("b", matchers.Equal(6)),
-//     }).Test(s) // pass
+//	m := map[string]int{"a": 6, "b": 2}
+//	matchers.MapOf(
+//	    matchers.KV("a", matchers.Equal(2)),
+//	    matchers.KV("b", matchers.Equal(6)),
+//	}).Test(s) // pass
 func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
 		func(value interface{}) bool {
@@ -202,11 +202,11 @@ func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 // the specified list, and that the matcher for each key is satisfied by the corresponding value.
 // The map may also contain additional keys.
 //
-//     m := map[string]int{"a": 6, "b": 2}
-//     matchers.MapOf(
-//         matchers.KV("a", matchers.Equal(2)),
-//         matchers.KV("b", matchers.Equal(6)),
-//     }).Test(s) // pass
+//	m := map[string]int{"a": 6, "b": 2}
+//	matchers.MapOf(
+//	    matchers.KV("a", matchers.Equal(2)),
+//	    matchers.KV("b", matchers.Equal(6)),
+//	}).Test(s) // pass
 func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
 		func(value interface{}) bool {
@@ -302,10 +302,10 @@ func getSortedMapKeys(mapValue interface{}) []string {
 // and applies a matcher to that value. It fails if no such key exists (see
 // OptValueForKey).
 //
-//     myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
-//     matchers.In(t).Assert(myObject,
-//         matchers.ValueForKey("a").Should(
-//             matchers.ValueForKey("b").Should(Equal(2))))
+//	myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
+//	matchers.In(t).Assert(myObject,
+//	    matchers.ValueForKey("a").Should(
+//	        matchers.ValueForKey("b").Should(Equal(2))))
 func ValueForKey(key interface{}) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("for key %s", DescribeValue(key)),
@@ -331,10 +331,10 @@ func ValueForKey(key interface{}) MatcherTransform {
 // and applies a matcher to that value. If no such key exists, it returns the zero
 // value for the type. If the map was nil, it returns nil.
 //
-//     myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
-//     matchers.In(t).Assert(myMap,
-//         matchers.OptValueForKey("a").Should(
-//             matchers.OptValueForKey("c").Should(Equal(0))))
+//	myMap := map[string]map[string]int{"a": map[string]int{"b": 2}}
+//	matchers.In(t).Assert(myMap,
+//	    matchers.OptValueForKey("a").Should(
+//	        matchers.OptValueForKey("c").Should(Equal(0))))
 func OptValueForKey(key interface{}) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("for key %s", DescribeValue(key)),
