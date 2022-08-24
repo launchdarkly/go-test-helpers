@@ -185,6 +185,7 @@ func BrokenConnectionHandler() http.Handler {
 				return
 			}
 		}
-		panic("connection deliberately closed by httphelpers.BrokenConnectionHandler")
+		panic("connection deliberately closed by httphelpers.BrokenConnectionHandler; a panic stacktrace" +
+			" here from the Go HTTP framework is expected and can be ignored")
 	})
 }
