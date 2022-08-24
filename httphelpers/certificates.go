@@ -10,7 +10,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"net"
@@ -26,7 +25,7 @@ import (
 // function's second and third parameters provide the CA certificate for configuring the client,
 // and a preconfigured CertPool in case that is more convenient to use.
 func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []byte, *x509.CertPool)) {
-	certFile, err := ioutil.TempFile("", "test")
+	certFile, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
@@ -39,7 +38,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []
 		}
 	}
 	defer tryToDelete(certFilePath)
-	keyFile, err := ioutil.TempFile("", "test")
+	keyFile, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
@@ -50,7 +49,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []
 	if err != nil {
 		panic(fmt.Errorf("can't create self-signed certificate: %s", err))
 	}
-	certData, err := ioutil.ReadFile(certFilePath) //nolint:gosec
+	certData, err := os.ReadFile(certFilePath) //nolint:gosec
 	if err != nil {
 		panic(fmt.Errorf("can't read self-signed certificate: %s", err))
 	}

@@ -2,7 +2,7 @@ package httphelpers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -19,7 +19,7 @@ func getRequestBody(request *http.Request) []byte {
 	if request.Body == nil {
 		return nil
 	}
-	body, _ := ioutil.ReadAll(request.Body)
+	body, _ := io.ReadAll(request.Body)
 	return body
 }
 
