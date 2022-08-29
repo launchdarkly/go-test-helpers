@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.0.1] - 2022-08-29
+### Fixed:
+- Fixed import paths to have `/v3`.
+
 ## [3.0.0] - 2022-08-29
 ### Added:
 - `TryReceive`, `RequireValue`, `AssertNoMoreValues`, `AssertChannelClosed`, `AssertChannelNotClosed`: new generics-based helpers related to channels.
