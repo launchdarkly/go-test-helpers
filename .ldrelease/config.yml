@@ -8,6 +8,10 @@ jobs:
     env:
       LD_RELEASE_GO_IMPORT_PATH: github.com/launchdarkly/go-test-helpers
 
+branches:
+  - name: main
+  - name: 2.x
+
 publications:
   - url: https://pkg.go.dev/github.com/launchdarkly/go-test-helpers
     description: documentation
