@@ -154,6 +154,9 @@ func (m *mockTestingT) runSafely(action func(TestingT)) {
 // ShouldFail is a shortcut for running some action against a testbox.TestingT and
 // asserting that it failed.
 func ShouldFail(t assert.TestingT, action func(TestingT)) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	shouldGetHere := make(chan struct{}, 1)
 	result := SandboxTest(func(t1 TestingT) {
 		action(t1)
@@ -173,6 +176,9 @@ func ShouldFail(t assert.TestingT, action func(TestingT)) bool {
 // ShouldFailAndExitEarly is the same as ShouldFail, except that it also asserts that
 // the test was terminated early with FailNow.
 func ShouldFailAndExitEarly(t assert.TestingT, action func(TestingT)) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	shouldNotGetHere := make(chan struct{}, 1)
 	result := SandboxTest(func(t1 TestingT) {
 		action(t1)

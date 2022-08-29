@@ -29,6 +29,9 @@ func TryReceive[V any](ch <-chan V, timeout time.Duration) (V, bool, bool) {
 // RequireValue returns the next value from the channel, or forces an immediate test failure
 // and exit if the timeout expires first.
 func RequireValue[V any](t require.TestingT, ch <-chan V, timeout time.Duration, customMessageAndArgs ...any) V {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	v, ok, closed := TryReceive(ch, timeout)
 	if ok {
 		return v
@@ -53,6 +56,9 @@ func AssertNoMoreValues[V any](
 	timeout time.Duration,
 	customMessageAndArgs ...any,
 ) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	v, ok, closed := TryReceive(ch, timeout)
 	if ok {
 		failWithMessageAndArgs(t, customMessageAndArgs,
@@ -73,6 +79,9 @@ func AssertChannelClosed[V any](
 	timeout time.Duration,
 	customMessageAndArgs ...any,
 ) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	v, ok, closed := TryReceive(ch, timeout)
 	if ok {
 		failWithMessageAndArgs(t, customMessageAndArgs,
@@ -95,6 +104,9 @@ func AssertChannelNotClosed[V any](
 	timeout time.Duration,
 	customMessageAndArgs ...any,
 ) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	deadline := time.NewTimer(timeout)
 	defer deadline.Stop()
 	for {

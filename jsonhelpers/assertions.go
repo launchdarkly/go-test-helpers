@@ -14,6 +14,9 @@ import (
 // The two values may either be pre-parsed JValue instances, or if they are not, they are
 // converted using the same rules as JValueOf.
 func AssertEqual(t assert.TestingT, expected, actual any) bool {
+	if t, ok := t.(interface{ Helper() }); ok {
+		t.Helper()
+	}
 	ev, av := JValueOf(expected), JValueOf(actual)
 	if ev.err != nil {
 		t.Errorf("invalid expected value (%s): %s", ev.err, ev)
