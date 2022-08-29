@@ -1,4 +1,4 @@
-module github.com/launchdarkly/go-test-helpers/v2
+module github.com/launchdarkly/go-test-helpers/v3
 
 go 1.18
 

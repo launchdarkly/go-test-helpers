@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/launchdarkly/go-test-helpers/v2/jsonhelpers"
+	"github.com/launchdarkly/go-test-helpers/v3/jsonhelpers"
 )
 
 // JSONEqual is similar to Equal but with richer behavior for JSON values.

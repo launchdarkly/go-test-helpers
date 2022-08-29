@@ -26,10 +26,11 @@ Import any of these packages in your test code:
 
 ```go
 import (
-    "github.com/launchdarkly/go-test-helpers/v2"
-    "github.com/launchdarkly/go-test-helpers/v2/httphelpers"
-    "github.com/launchdarkly/go-test-helpers/v2/ldservices"
-    "github.com/launchdarkly/go-test-helpers/v2/testbox"
+    "github.com/launchdarkly/go-test-helpers/v3"
+    "github.com/launchdarkly/go-test-helpers/v3/httphelpers"
+    "github.com/launchdarkly/go-test-helpers/v3/jsonhelpers"
+    "github.com/launchdarkly/go-test-helpers/v3/ldservices"
+    "github.com/launchdarkly/go-test-helpers/v3/testbox"
 )
 ```
 

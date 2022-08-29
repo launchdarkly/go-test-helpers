@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/launchdarkly/go-test-helpers/v2/jsonhelpers"
+	"github.com/launchdarkly/go-test-helpers/v3/jsonhelpers"
 )
 
 // DescribeValue tries to create attractive string representations of values for test
