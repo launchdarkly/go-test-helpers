@@ -10,7 +10,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"net"
@@ -26,7 +25,7 @@ import (
 // function's second and third parameters provide the CA certificate for configuring the client,
 // and a preconfigured CertPool in case that is more convenient to use.
 func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []byte, *x509.CertPool)) {
-	certFile, err := ioutil.TempFile("", "test")
+	certFile, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
@@ -39,7 +38,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []
 		}
 	}
 	defer tryToDelete(certFilePath)
-	keyFile, err := ioutil.TempFile("", "test")
+	keyFile, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
@@ -50,7 +49,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []
 	if err != nil {
 		panic(fmt.Errorf("can't create self-signed certificate: %s", err))
 	}
-	certData, err := ioutil.ReadFile(certFilePath) //nolint:gosec
+	certData, err := os.ReadFile(certFilePath) //nolint:gosec
 	if err != nil {
 		panic(fmt.Errorf("can't read self-signed certificate: %s", err))
 	}
@@ -77,8 +76,8 @@ func MakeServerWithCert(certFilePath, keyFilePath string, handler http.Handler) 
 	server := httptest.NewUnstartedServer(handler)
 	server.TLS = &tls.Config{
 		Certificates: []tls.Certificate{cert},
+		MinVersion:   tls.VersionTLS12,
 	}
-	server.TLS.BuildNameToCertificate()
 	server.StartTLS()
 	return server, nil
 }
@@ -133,7 +132,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	certOut, err := os.Create(certFilePath)
+	certOut, err := os.Create(certFilePath) //nolint:gosec
 	if err != nil {
 		return err
 	}
@@ -144,7 +143,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600) //nolint:gosec
 	if err != nil {
 		return err
 	}

@@ -24,9 +24,9 @@ type AssertionScope struct {
 // as Go's testing.T (as defined by the TestingT interface). Any calls to Assert or Require on
 // the returned AssertionScope will update the state of t.
 //
-//     func TestSomething(t *testing.T) {
-//         matchers.In(t).Assert(x, matchers.Equal(2))
-//     }
+//	func TestSomething(t *testing.T) {
+//	    matchers.In(t).Assert(x, matchers.Equal(2))
+//	}
 //
 // See also For.
 func In(t TestingT) AssertionScope {
@@ -37,9 +37,9 @@ func In(t TestingT) AssertionScope {
 // In this example, a failure would be logged as "score: does not equal 2" rather than only
 // "does not equal 2".
 //
-//     func TestSomething(t *testing.T) {
-//         matchers.For(t, "score").Assert(x, matchers.Equal(2))
-//     }
+//	func TestSomething(t *testing.T) {
+//	    matchers.For(t, "score").Assert(x, matchers.Equal(2))
+//	}
 func For(t TestingT, name string) AssertionScope {
 	return AssertionScope{t: t, prefix: name + ": "}
 }
@@ -48,9 +48,9 @@ func For(t TestingT, name string) AssertionScope {
 // a failure would be logged as "final: score: does not equal 2" rather than only
 // "does not equal 2".
 //
-//     func TestSomething(t *testing.T) {
-//         matchers.In(t).For("final").For("score").Assert(x, matchers.Equal(2))
-//     }
+//	func TestSomething(t *testing.T) {
+//	    matchers.In(t).For("final").For("score").Assert(x, matchers.Equal(2))
+//	}
 func (a AssertionScope) For(name string) AssertionScope {
 	return AssertionScope{t: a.t, prefix: a.prefix + name + ": "}
 }

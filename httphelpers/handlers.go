@@ -2,7 +2,7 @@ package httphelpers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -19,16 +19,16 @@ func getRequestBody(request *http.Request) []byte {
 	if request.Body == nil {
 		return nil
 	}
-	body, _ := ioutil.ReadAll(request.Body)
+	body, _ := io.ReadAll(request.Body)
 	return body
 }
 
 // DelegatingHandler is a struct that behaves as an http.Handler by delegating to the handler it wraps.
 // Use this if you want to change the handler's behavior dynamically during a test.
 //
-//     dh := &httphelpers.DelegatingHandler{httphelpers.HandlerWithStatus(200)}
-//     server := httptest.NewServer(dh) // the server will return 200
-//     dh.Handler = httphelpers.HandlerWithStatus(401) // now the server will return 401
+//	dh := &httphelpers.DelegatingHandler{httphelpers.HandlerWithStatus(200)}
+//	server := httptest.NewServer(dh) // the server will return 200
+//	dh.Handler = httphelpers.HandlerWithStatus(401) // now the server will return 401
 type DelegatingHandler struct {
 	Handler http.Handler
 }
@@ -127,12 +127,12 @@ func HandlerWithStatus(status int) http.Handler {
 
 // RecordingHandler wraps any HTTP handler in another handler that pushes received requests onto a channel.
 //
-//     handler, requestsCh := httphelpers.RecordingHandler(httphelpers.HandlerWithStatus(200))
-//     httphelpers.WithServer(handler, func(server *http.TestServer) {
-//         doSomethingThatMakesARequest(server.URL) // request will receive a 200 status
-//         r := <-requestsCh
-//         verifyRequestPropertiesWereCorrect(r.Request, r.Body)
-//     })
+//	handler, requestsCh := httphelpers.RecordingHandler(httphelpers.HandlerWithStatus(200))
+//	httphelpers.WithServer(handler, func(server *http.TestServer) {
+//	    doSomethingThatMakesARequest(server.URL) // request will receive a 200 status
+//	    r := <-requestsCh
+//	    verifyRequestPropertiesWereCorrect(r.Request, r.Body)
+//	})
 func RecordingHandler(delegateToHandler http.Handler) (http.Handler, <-chan HTTPRequestInfo) {
 	requestsCh := make(chan HTTPRequestInfo, 100)
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -147,10 +147,10 @@ func RecordingHandler(delegateToHandler http.Handler) (http.Handler, <-chan HTTP
 //
 // In this example, the first HTTP request will get a 503, and all subsequent requests will get a 200.
 //
-//     handler := httphelpers.SequentialHandler(
-//         httphelpers.HandlerWithStatus(503),
-//         httphelpers.HandlerWithStatus(200)
-//     )
+//	handler := httphelpers.SequentialHandler(
+//	    httphelpers.HandlerWithStatus(503),
+//	    httphelpers.HandlerWithStatus(200)
+//	)
 func SequentialHandler(firstHandler http.Handler, remainingHandlers ...http.Handler) http.Handler {
 	allHandlers := append([]http.Handler{firstHandler}, remainingHandlers...)
 	requestCounter := 0
@@ -170,9 +170,9 @@ func SequentialHandler(firstHandler http.Handler, remainingHandlers ...http.Hand
 // and converted to an error result. However, do not use this with httptest.ResponseRecorder
 // or your test will panic.
 //
-//     handler := BrokenConnectionHandler()
-//     client := NewClientFromHandler(handler)
-//     // All requests made with this client will return an error
+//	handler := BrokenConnectionHandler()
+//	client := NewClientFromHandler(handler)
+//	// All requests made with this client will return an error
 func BrokenConnectionHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if _, ok := w.(*httptest.ResponseRecorder); ok {

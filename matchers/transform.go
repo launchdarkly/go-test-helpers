@@ -11,9 +11,9 @@ import (
 // For instance, this could be used to access a field inside a struct or some other nested
 // data structure. Assuming there is a struct type S with a field F, you could do this:
 //
-//     SF := matchers.Transform("F",
-//         func(value interface{}) interface{} { return value.(S).F })
-//     SF.Should(Equal(3)).Assert(t, someInstanceOfS)
+//	SF := matchers.Transform("F",
+//	    func(value interface{}) interface{} { return value.(S).F })
+//	SF.Should(Equal(3)).Assert(t, someInstanceOfS)
 //
 // The advantages of doing this, instead of simply getting the F field directly and
 // testing it, are 1. you can use combinators such as AllOf to test multiple properties
@@ -22,8 +22,8 @@ import (
 // instance, in the example above, if someInstanceOfS.F was really 4, the failure message
 // would show:
 //
-//     expected: F equal to 3
-//     actual value was: {F: 4}
+//	expected: F equal to 3
+//	actual value was: {F: 4}
 //
 // You can use MatcherTransform's other methods to add type safety.
 type MatcherTransform struct {
@@ -48,9 +48,9 @@ func Transform(
 // the desired type, it returns a modified MatcherTransform that will safely fail if the
 // wrong type is passed in.
 //
-//     stringLength := matchers.Transform("string length",
-//         func(value interface{}) interface{} { return len(value.(string)) }).
-//         EnsureInputValueType("")
+//	stringLength := matchers.Transform("string length",
+//	    func(value interface{}) interface{} { return len(value.(string)) }).
+//	    EnsureInputValueType("")
 func (mt MatcherTransform) EnsureInputValueType(valueOfType interface{}) MatcherTransform {
 	mt.expectedType = valueOfType
 	return mt

@@ -20,22 +20,22 @@ import "github.com/stretchr/testify/require"
 // that has two implementations: real and mock. Test logic can then be written against this TestingT,
 // rather than *testing.T.
 //
-//     func RunContractTests(t *testing.T, impl InterfaceUnderTest) {
-//         runContractTests(testbox.RealTest(t))
-//     }
+//	func RunContractTests(t *testing.T, impl InterfaceUnderTest) {
+//	    runContractTests(testbox.RealTest(t))
+//	}
 //
-//     func runContractTests(abstractT testbox.TestingT, impl InterfaceUnderTest) {
-//         assert.True(abstractT, impl.SomeConditionThatShouldBeTrueForTheseInputs(someParams))
-//         abstractT.Run("subtest", func(abstractSubT helpers.TestingT) { ... }
-//     }
+//	func runContractTests(abstractT testbox.TestingT, impl InterfaceUnderTest) {
+//	    assert.True(abstractT, impl.SomeConditionThatShouldBeTrueForTheseInputs(someParams))
+//	    abstractT.Run("subtest", func(abstractSubT helpers.TestingT) { ... }
+//	}
 //
-//     func TestContractTestFailureCondition(t *testing.T) {
-//         impl := createDeliberatelyBrokenImplementation()
-//         result := testbox.SandboxTest(func(abstractT testbox.TestingT) {
-//             runContractTests(abstractT, impl) })
-//         assert.True(t, result.Failed // we expect it to fail
-//         assert.Len(t, result.Failures, 1)
-//     }
+//	func TestContractTestFailureCondition(t *testing.T) {
+//	    impl := createDeliberatelyBrokenImplementation()
+//	    result := testbox.SandboxTest(func(abstractT testbox.TestingT) {
+//	        runContractTests(abstractT, impl) })
+//	    assert.True(t, result.Failed // we expect it to fail
+//	    assert.Len(t, result.Failures, 1)
+//	}
 //
 // TestingT includes the same subsets of testing.T methods that are defined in the TestingT interfaces
 // of github.com/stretchr/testify/assert and github.com/stretchr/testify/require, so all assertions in

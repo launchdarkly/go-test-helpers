@@ -8,19 +8,18 @@
 //
 // Examples of syntax:
 //
-//     import m "github.com/launchdarkly/go-test-helpers/matchers"
+//	import m "github.com/launchdarkly/go-test-helpers/matchers"
 //
-//     func TestSomething(t *T) {
-//         eventData := []string{
-//             `{"kind": "feature", "value": true}`,
-//             `{"key": "x", "kind": "custom"}`,
-//         }
-//         m.For(t, "event data").Assert(eventData, m.ItemsInAnyOrder(
-//             m.JSONStrEqual(`{"kind": "custom", "key": "x"}`),
-//             m.JSONStrEqual(`{"kind": "feature", "value": true}`),
-//         ))
-//         m.For(t, "first event").Assert(eventData[0],
-//             m.JSONProperty("kind").Should(m.Not(m.Equal("summary"))))
-//     }
-//
+//	func TestSomething(t *T) {
+//	    eventData := []string{
+//	        `{"kind": "feature", "value": true}`,
+//	        `{"key": "x", "kind": "custom"}`,
+//	    }
+//	    m.For(t, "event data").Assert(eventData, m.ItemsInAnyOrder(
+//	        m.JSONStrEqual(`{"kind": "custom", "key": "x"}`),
+//	        m.JSONStrEqual(`{"kind": "feature", "value": true}`),
+//	    ))
+//	    m.For(t, "first event").Assert(eventData[0],
+//	        m.JSONProperty("kind").Should(m.Not(m.Equal("summary"))))
+//	}
 package matchers

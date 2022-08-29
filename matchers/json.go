@@ -17,8 +17,8 @@ import (
 // it will be first serialized to JSON with json.Marshal and then parsed. Then the parsed values
 // or data structures are tested for deep equality. For instance, this test passes:
 //
-//     matchers.In(t).Assert([]byte(`{"a": true, "b": false`),
-//         matchers.JSONEqual(map[string]bool{b: false, a: true}))
+//	matchers.In(t).Assert([]byte(`{"a": true, "b": false`),
+//	    matchers.JSONEqual(map[string]bool{b: false, a: true}))
 //
 // The shortcut JSONEqualStr can be used to avoid writing []byte() if the expected value is
 // already a serialized JSON string.
@@ -64,8 +64,8 @@ func JSONEqual(expectedValue interface{}) Matcher {
 // to JSONEqual would cause that value to be serialized in the way JSON represents strings,
 // that is, with quoting and escaping.
 //
-//     matchers.In(t).Assert(`{"a": true, "b": false`,
-//         matchers.JSONStrEqual(`{"b": false, "a": true}`)
+//	matchers.In(t).Assert(`{"a": true, "b": false`,
+//	    matchers.JSONStrEqual(`{"b": false, "a": true}`)
 func JSONStrEqual(expectedValue string) Matcher {
 	return Transform("", func(value interface{}) (interface{}, error) {
 		if s, ok := value.(string); ok {
@@ -79,10 +79,10 @@ func JSONStrEqual(expectedValue string) Matcher {
 // and gets a named property from it; then you can apply a matcher to the value of that
 // property. It fails if no such property exists (see OptJSONProperty).
 //
-//     myObject := []byte(`{"a": {"b": 2}}`)
-//     matchers.In(t).Assert(myObject,
-//         matchers.JSONProperty("a").Should(
-//             matchers.JSONProperty("b").Should(Equal(2))))
+//	myObject := []byte(`{"a": {"b": 2}}`)
+//	matchers.In(t).Assert(myObject,
+//	    matchers.JSONProperty("a").Should(
+//	        matchers.JSONProperty("b").Should(Equal(2))))
 //
 // An alternative is to use JSONMap combined with MapOf or MapIncluding.
 func JSONProperty(name string) MatcherTransform {
@@ -120,9 +120,9 @@ func JSONOptProperty(name string) MatcherTransform {
 // it to []interface{} slice; then you can apply a matcher to that slice. It fails if the value is
 // not serializable as a JSON array.
 //
-//     myArray := []byte(`["a", "b", "c"]`)
-//     matchers.In(t).Assert(myArray,
-//         matchers.JSONArray().Should(matchers.Length().Should(matchers.Equal(3))))
+//	myArray := []byte(`["a", "b", "c"]`)
+//	matchers.In(t).Assert(myArray,
+//	    matchers.JSONArray().Should(matchers.Length().Should(matchers.Equal(3))))
 func JSONArray() MatcherTransform {
 	return Transform(
 		"JSON array",
@@ -143,13 +143,13 @@ func JSONArray() MatcherTransform {
 // it to a map[interface{}]interface{}; then you can apply a matcher to that map. It fails if the
 // value is not serializable as a JSON object.
 //
-//     myArray := []byte(`{"a": 1, "b": "xyz"}`)
-//     matchers.In(t).Assert(myJSON,
-//         matchers.JSONMap().Should(
-//             matchers.MapOf(
-//                 matchers.KV("a", matchers.Equal(1)),
-//                 matchers.KV("b", matchers.StringHasPrefix("x")),
-//             )))
+//	myArray := []byte(`{"a": 1, "b": "xyz"}`)
+//	matchers.In(t).Assert(myJSON,
+//	    matchers.JSONMap().Should(
+//	        matchers.MapOf(
+//	            matchers.KV("a", matchers.Equal(1)),
+//	            matchers.KV("b", matchers.StringHasPrefix("x")),
+//	        )))
 func JSONMap() MatcherTransform {
 	return Transform(
 		"JSON map",

@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -20,11 +19,11 @@ func FilePathExists(path string) bool {
 // If deletion of the file fails (assuming it has not already been deleted) then an error is logged, but there is no
 // panic.
 //
-//     helpers.WithTempFile(func(path string) {
-//         DoSomethingWithTempFile(path)
-//     }) // the file is deleted at the end of this block
+//	helpers.WithTempFile(func(path string) {
+//		DoSomethingWithTempFile(path)
+//	}) // the file is deleted at the end of this block
 func WithTempFile(f func(string)) {
-	file, err := ioutil.TempFile("", "test")
+	file, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}

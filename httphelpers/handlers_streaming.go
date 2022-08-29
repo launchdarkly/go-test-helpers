@@ -36,22 +36,22 @@ type StreamControl interface {
 // then another line will be sent every second with a counter; every 30 seconds, all active stream
 // connections are closed:
 //
-//     handler, stream := httphelpers.ChunkedStreamingHandler([]byte("hello\n"), "text/plain")
-//     (start server with handler)
-//     go func() {
-//         n := 1
-//         counter := time.NewTicker(time.Second)
-//         interrupter := time.NewTicker(time.Second * 10)
-//         for {
-//             select {
-//             case <-counter.C:
-//                 stream.Send([]byte(fmt.Sprintf("%d\n", n)))
-//                 n++
-//             case <-interrupter.C:
-//                 stream.EndAll()
-//             }
-//         }
-//     }()
+//	handler, stream := httphelpers.ChunkedStreamingHandler([]byte("hello\n"), "text/plain")
+//	(start server with handler)
+//	go func() {
+//	    n := 1
+//	    counter := time.NewTicker(time.Second)
+//	    interrupter := time.NewTicker(time.Second * 10)
+//	    for {
+//	        select {
+//	        case <-counter.C:
+//	            stream.Send([]byte(fmt.Sprintf("%d\n", n)))
+//	            n++
+//	        case <-interrupter.C:
+//	            stream.EndAll()
+//	        }
+//	    }
+//	}()
 func ChunkedStreamingHandler(initialChunk []byte, contentType string) (http.Handler, StreamControl) {
 	sh := &chunkedStreamingHandlerImpl{
 		initialChunk: initialChunk,
