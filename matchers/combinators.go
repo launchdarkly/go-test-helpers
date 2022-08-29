@@ -6,8 +6,8 @@ import (
 
 // Not negates the result of another Matcher.
 //
-//     matchers.Not(Equal(3)).Assert(t, 4)
-//     // failure message will describe expectation as "not (equal to 3)"
+//	matchers.Not(Equal(3)).Assert(t, 4)
+//	// failure message will describe expectation as "not (equal to 3)"
 func Not(matcher Matcher) Matcher {
 	return New(
 		func(value interface{}) bool {

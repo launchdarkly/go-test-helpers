@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // SandboxResult describes the aggregate test state produced by calling SandboxTest.
@@ -147,4 +149,42 @@ func (m *mockTestingT) runSafely(action func(TestingT)) {
 		action(m)
 	}()
 	<-exited
+}
+
+// ShouldFail is a shortcut for running some action against a testbox.TestingT and
+// asserting that it failed.
+func ShouldFail(t assert.TestingT, action func(TestingT)) bool {
+	shouldGetHere := make(chan struct{}, 1)
+	result := SandboxTest(func(t1 TestingT) {
+		action(t1)
+		shouldGetHere <- struct{}{}
+	})
+	if !result.Failed {
+		t.Errorf("expected test to fail, but it passed")
+		return false
+	}
+	if len(shouldGetHere) == 0 {
+		t.Errorf("test failed as expected, but it also terminated early and should not have")
+		return false
+	}
+	return true
+}
+
+// ShouldFailAndExitEarly is the same as ShouldFail, except that it also asserts that
+// the test was terminated early with FailNow.
+func ShouldFailAndExitEarly(t assert.TestingT, action func(TestingT)) bool {
+	shouldNotGetHere := make(chan struct{}, 1)
+	result := SandboxTest(func(t1 TestingT) {
+		action(t1)
+		shouldNotGetHere <- struct{}{}
+	})
+	if !result.Failed {
+		t.Errorf("expected test to fail, but it passed")
+		return false
+	}
+	if len(shouldNotGetHere) != 0 {
+		t.Errorf("test failed as expected, but it should have also terminated early and did not")
+		return false
+	}
+	return true
 }

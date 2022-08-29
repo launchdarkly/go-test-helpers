@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -20,11 +19,11 @@ func FilePathExists(path string) bool {
 // If deletion of the file fails (assuming it has not already been deleted) then an error is logged, but there is no
 // panic.
 //
-//     helpers.WithTempFile(func(path string) {
-//         DoSomethingWithTempFile(path)
-//     }) // the file is deleted at the end of this block
-func WithTempFile(f func(string)) {
-	file, err := ioutil.TempFile("", "test")
+//	helpers.WithTempFile(func(path string) {
+//		DoSomethingWithTempFile(path)
+//	}) // the file is deleted at the end of this block
+func WithTempFile(f func(filePath string)) {
+	file, err := os.CreateTemp("", "test")
 	if err != nil {
 		panic(fmt.Errorf("can't create temp file: %s", err))
 	}
@@ -39,4 +38,25 @@ func WithTempFile(f func(string)) {
 		}
 	})()
 	f(file.Name())
+}
+
+// WithTempFileData is identical to WithTempFile except that it prepopulates the file with the
+// specified data.
+func WithTempFileData(data []byte, f func(filePath string)) {
+	WithTempFile(func(filePath string) {
+		if err := os.WriteFile(filePath, data, 0600); err != nil {
+			panic(fmt.Errorf("can't write to temp file: %s", err))
+		}
+		f(filePath)
+	})
+}
+
+// WithTempDir creates a temporary directory, calls the function with its path, then removes it.
+func WithTempDir(f func(path string)) {
+	path, err := os.MkdirTemp("", "test")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(path) //nolint:errcheck
+	f(path)
 }

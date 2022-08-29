@@ -1,7 +1,7 @@
 package httphelpers
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -79,7 +79,7 @@ func TestChunkedStreamingHandlerEndAll(t *testing.T) {
 		}()
 
 		// ReadAll won't return until the stream is closed
-		data, err := ioutil.ReadAll(resp1.Body)
+		data, err := io.ReadAll(resp1.Body)
 		require.NoError(t, err)
 		assert.Equal(t, "hello,goodbye.", string(data))
 
@@ -91,7 +91,7 @@ func TestChunkedStreamingHandlerEndAll(t *testing.T) {
 			stream.EndAll()
 		}()
 
-		data, err = ioutil.ReadAll(resp2.Body)
+		data, err = io.ReadAll(resp2.Body)
 		require.NoError(t, err)
 		assert.Equal(t, "hello,", string(data))
 	})
@@ -112,7 +112,7 @@ func TestChunkedStreamingHandlerClose(t *testing.T) {
 			stream.Close()
 		}()
 
-		data, err := ioutil.ReadAll(resp1.Body)
+		data, err := io.ReadAll(resp1.Body)
 		require.NoError(t, err)
 		assert.Equal(t, "hello,goodbye.", string(data))
 

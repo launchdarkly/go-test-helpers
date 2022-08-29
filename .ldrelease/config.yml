@@ -2,16 +2,14 @@ version: 2
 
 jobs:
   - docker:
-      image: golang:1.13-buster
+      image: golang:1.18-buster
     template:
       name: go
-    env:
-      LD_RELEASE_GO_IMPORT_PATH: github.com/launchdarkly/go-test-helpers
 
 branches:
   - name: main
   - name: 2.x
 
 publications:
-  - url: https://pkg.go.dev/github.com/launchdarkly/go-test-helpers
+  - url: https://pkg.go.dev/github.com/launchdarkly/go-test-helpers/v2
     description: documentation

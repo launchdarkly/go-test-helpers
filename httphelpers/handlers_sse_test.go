@@ -1,7 +1,7 @@
 package httphelpers
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,7 +31,7 @@ func TestSSEHandler(t *testing.T) {
 		stream.Enqueue(SSEEvent{"", "event3", "data3", 500})
 		stream.EndAll()
 
-		data, err := ioutil.ReadAll(resp1.Body)
+		data, err := io.ReadAll(resp1.Body)
 
 		assert.NoError(t, err)
 		assert.Equal(t, `id: id1

@@ -240,3 +240,34 @@ func TestSandboxTestSubtests(t *testing.T) {
 		}
 	})
 }
+
+func TestShouldFail(t *testing.T) {
+	ShouldFail(t, func(t TestingT) {
+		t.Errorf("boo")
+	})
+
+	result := SandboxTest(func(t TestingT) {
+		ShouldFail(t, func(TestingT) {})
+	})
+	assert.True(t, result.Failed)
+
+	result = SandboxTest(func(t TestingT) {
+		ShouldFail(t, func(TestingT) {
+			t.Errorf("boo")
+			t.FailNow() // unexpected early exit
+		})
+	})
+	assert.True(t, result.Failed)
+
+	ShouldFailAndExitEarly(t, func(t TestingT) {
+		t.Errorf("boo")
+		t.FailNow()
+	})
+
+	result = SandboxTest(func(t TestingT) {
+		ShouldFailAndExitEarly(t, func(TestingT) {
+			t.Errorf("boo")
+		})
+	})
+	assert.True(t, result.Failed)
+}

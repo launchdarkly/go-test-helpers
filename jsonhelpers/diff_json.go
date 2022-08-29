@@ -186,8 +186,7 @@ func describeArrayValueDifference(array1, array2 []interface{}, path JSONPath) J
 		}
 	}
 
-	var diffs JSONDiffResult //nolint:prealloc
-
+	var diffs JSONDiffResult
 	for i, value1 := range array1 {
 		subpath := append(append(JSONPath(nil), path...), JSONPathComponent{Index: i})
 		value2 := array2[i]

@@ -80,23 +80,23 @@ type sseStreamControlImpl struct {
 // event will be sent every second with a counter; every 30 seconds, all active stream connections are
 // are closed:
 //
-//     initialEvent := httphelpers.SSEEvent{Data: "hello"}
-//     handler, stream := httphelpers.SSEHandler(&initialEvent)
-//     (start server with handler)
-//     go func() {
-//         n := 1
-//         counter := time.NewTicker(time.Second)
-//         interrupter := time.NewTicker(time.Second * 10)
-//         for {
-//             select {
-//             case <-counter.C:
-//                 stream.Send(httphelpers.SSEEvent{Data: fmt.Sprintf("%d\n", n)})
-//                 n++
-//             case <-interrupter.C:
-//                 stream.EndAll()
-//             }
-//         }
-//     }()
+//	initialEvent := httphelpers.SSEEvent{Data: "hello"}
+//	handler, stream := httphelpers.SSEHandler(&initialEvent)
+//	(start server with handler)
+//	go func() {
+//	    n := 1
+//	    counter := time.NewTicker(time.Second)
+//	    interrupter := time.NewTicker(time.Second * 10)
+//	    for {
+//	        select {
+//	        case <-counter.C:
+//	            stream.Send(httphelpers.SSEEvent{Data: fmt.Sprintf("%d\n", n)})
+//	            n++
+//	        case <-interrupter.C:
+//	            stream.EndAll()
+//	        }
+//	    }
+//	}()
 func SSEHandler(initialEvent *SSEEvent) (http.Handler, SSEStreamControl) {
 	var initialData []byte
 	if initialEvent != nil {
