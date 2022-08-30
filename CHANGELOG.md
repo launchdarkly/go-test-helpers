@@ -2,6 +2,10 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.0.2] - 2022-08-30
+### Fixed:
+- Test assertion helpers now call `t.Helper()` to exclude themselves from stacktraces.
+
 ## [3.0.1] - 2022-08-29
 ### Fixed:
 - Fixed import paths to have `/v3`.
