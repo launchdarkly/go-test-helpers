@@ -1,0 +1,70 @@
+on:
+- pull_request
+
+
+env:
+  TEST_REPORTS: /tmp/reports
+  ARTIFACTS: /tmp/artifacts
+
+jobs:
+  go-test-linux:
+    strategy:
+      matrix:
+        go:
+        - version: '1.18'
+          run_lint: 'false'
+        - version: '1.19'
+          run_lint: 'true'
+
+    name: Go Test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+    - name: Setup Go
+      uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+      with:
+        go-version: ${{ matrix.go.version }}
+
+    - name: Install go-junit-report
+      run: go install github.com/jstemmer/go-junit-report/v2@v2.0.0
+
+    - name: Lint
+      run: make lint
+      if: ${{ matrix.go.run_lint == 'true' }}
+
+    - name: Test
+      run: |
+        mkdir -p $TEST_REPORTS
+        mkdir -p $ARTIFACTS
+        trap "go-junit-report < $ARTIFACTS/report.txt > $TEST_REPORTS/junit.xml" EXIT
+        make test | tee $ARTIFACTS/report.txt
+
+    - name: Collect test reports
+      uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+      with:
+        path: ${{ env.TEST_REPORTS }}
+        name: reports-${{ matrix.go.version }}
+
+    - name: Collect artifacts
+      uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+      with:
+        path: ${{ env.ARTIFACTS }}
+        name: artifacts-${{ matrix.go.version }}
+
+  go-test-windows:
+    name: Go Test (windows)
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+    - name: Setup Go
+      uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+      with:
+        go-version: '1.18.5'
+
+    - name: Test
+      run: go test -race ./...
