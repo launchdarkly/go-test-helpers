@@ -71,7 +71,11 @@ func ChunkedStreamingHandlerOptionEnvironmentID(environmentID string) ChunkedStr
 //	        }
 //	    }
 //	}()
-func ChunkedStreamingHandler(initialChunk []byte, contentType string, options ...ChunkedStreamingHandlerOption) (http.Handler, StreamControl) {
+func ChunkedStreamingHandler(
+	initialChunk []byte,
+	contentType string,
+	options ...ChunkedStreamingHandlerOption,
+) (http.Handler, StreamControl) {
 	sh := &chunkedStreamingHandlerImpl{
 		initialChunk: initialChunk,
 		contentType:  contentType,
