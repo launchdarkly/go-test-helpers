@@ -34,7 +34,7 @@ type ChunkedStreamingHandlerOption interface {
 type environmentIDChunkedStreamingHandlerOption string
 
 func (o environmentIDChunkedStreamingHandlerOption) apply(h *chunkedStreamingHandlerImpl) {
-	h.environmentId = string(o)
+	h.environmentID = string(o)
 }
 
 // ChunkedStreamingHandlerOptionEnvironmentID returns an option that sets the environment ID
@@ -89,7 +89,7 @@ type chunkedStreamingHandlerImpl struct {
 	channels      []chan []byte
 	closed        bool
 	lock          sync.Mutex
-	environmentId string
+	environmentID string
 }
 
 func (s *chunkedStreamingHandlerImpl) Enqueue(data []byte) {
@@ -196,8 +196,8 @@ func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, r *http.R
 	h := w.Header()
 	h.Set("Content-Type", s.contentType)
 	h.Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	if len(s.environmentId) > 0 {
-		h.Set("X-Ld-Envid", s.environmentId)
+	if len(s.environmentID) > 0 {
+		h.Set("X-Ld-Envid", s.environmentID)
 	}
 
 	if s.initialChunk != nil {
