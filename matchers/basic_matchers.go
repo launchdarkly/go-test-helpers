@@ -15,7 +15,7 @@ func Equal(expectedValue interface{}) Matcher {
 		func() string {
 			return fmt.Sprintf("equal to %s", DescribeValue(expectedValue))
 		},
-		func(value interface{}) string {
+		func(_ interface{}) string {
 			return fmt.Sprintf("did not equal %s", DescribeValue(expectedValue))
 		},
 	)
@@ -39,7 +39,7 @@ func BeNil() Matcher {
 		func() string {
 			return "is nil"
 		},
-		func(value interface{}) string {
+		func(_ interface{}) string {
 			return "was not nil"
 		},
 	)

@@ -89,7 +89,7 @@ func HandlerForPathRegex(pathRegex string, handlerForPath http.Handler, defaultH
 // HandlerWithJSONResponse creates an HTTP handler that returns a 200 status and the JSON encoding of
 // the specified object.
 func HandlerWithJSONResponse(contentToEncode interface{}, additionalHeaders http.Header) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		bytes, err := json.Marshal(contentToEncode)
 		if err != nil {
 			log.Printf("error encoding JSON response: %s", err)
@@ -107,7 +107,7 @@ func HandlerWithJSONResponse(contentToEncode interface{}, additionalHeaders http
 
 // HandlerWithResponse creates an HTTP handler that always returns the same status code, headers, and body.
 func HandlerWithResponse(status int, headers http.Header, body []byte) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		for k, vv := range headers {
 			w.Header()[k] = vv
 		}
@@ -120,7 +120,7 @@ func HandlerWithResponse(status int, headers http.Header, body []byte) http.Hand
 
 // HandlerWithStatus creates an HTTP handler that always returns the same status code.
 func HandlerWithStatus(status int) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(status)
 	})
 }
@@ -174,7 +174,7 @@ func SequentialHandler(firstHandler http.Handler, remainingHandlers ...http.Hand
 //	client := NewClientFromHandler(handler)
 //	// All requests made with this client will return an error
 func BrokenConnectionHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		if _, ok := w.(*httptest.ResponseRecorder); ok {
 			panic("httphelpers.BrokenConnectionHandler cannot be used with a ResponseRecorder")
 		}

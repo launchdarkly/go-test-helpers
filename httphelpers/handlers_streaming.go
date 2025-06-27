@@ -149,7 +149,7 @@ func (s *chunkedStreamingHandlerImpl) removeChannel(channelToRemove chan []byte)
 	close(channelToRemove)
 }
 
-func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		log.Println("httphelpers.ChunkedStreamingHandler can't be used with a ResponseWriter that does not support Flush")
