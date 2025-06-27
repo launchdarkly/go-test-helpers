@@ -1,6 +1,6 @@
 module github.com/launchdarkly/go-test-helpers/v3
 
-go 1.18
+go 1.23
 
 require github.com/stretchr/testify v1.5.1
 
