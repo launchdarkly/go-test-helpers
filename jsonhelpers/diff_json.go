@@ -223,9 +223,9 @@ func describeObjectValueDifference(object1, object2 map[string]any, path JSONPat
 				}
 				diffs = append(diffs, describeValueDifference(value1, value2, subpath)...)
 				continue
-			} else {
-				desc1 = string(CanonicalizeJSON(ToJSON(value1)))
 			}
+
+			desc1 = string(CanonicalizeJSON(ToJSON(value1)))
 		} else {
 			desc2 = string(CanonicalizeJSON(ToJSON(object2[key])))
 		}
