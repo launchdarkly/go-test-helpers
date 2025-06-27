@@ -123,3 +123,29 @@ func TestChunkedStreamingHandlerClose(t *testing.T) {
 		assert.Equal(t, 500, resp2.StatusCode)
 	})
 }
+
+func TestChunkedStreamingHandlerWithEnvironmentID(t *testing.T) {
+	initialData := []byte("hello")
+	handler, stream := ChunkedStreamingHandler(
+		initialData,
+		"text/plain",
+		ChunkedStreamingHandlerOptionEnvironmentID("env-id"),
+	)
+	defer stream.Close()
+
+	WithServer(handler, func(server *httptest.Server) {
+		resp1, err := http.DefaultClient.Get(server.URL)
+		require.NoError(t, err)
+		defer resp1.Body.Close()
+
+		assert.Equal(t, 200, resp1.StatusCode)
+		assert.Equal(t, "text/plain", resp1.Header.Get("Content-Type"))
+		assert.Equal(t, "env-id", resp1.Header.Get("X-Ld-Envid"))
+
+		stream.EndAll()
+
+		data, err := io.ReadAll(resp1.Body)
+		require.NoError(t, err)
+		assert.Equal(t, "hello", string(data))
+	})
+}
