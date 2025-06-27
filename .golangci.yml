@@ -4,7 +4,6 @@ run:
 linters:
   enable:
     - bodyclose
-    - depguard
     - dupl
     - gochecknoglobals
     - gochecknoinits
