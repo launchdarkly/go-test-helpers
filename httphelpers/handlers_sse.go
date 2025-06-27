@@ -106,6 +106,23 @@ func SSEHandler(initialEvent *SSEEvent) (http.Handler, SSEStreamControl) {
 	return handler, &sseStreamControlImpl{streamControl}
 }
 
+// SSEHandlerWithEnvironmentID creates an HTTP handler that streams Server-Sent Events data.
+//
+// The behavior is exactly the same as SSEHandler except environmentID will be returned in
+// the response header X-Ld-Envid.
+func SSEHandlerWithEnvironmentID(initialEvent *SSEEvent, environmentID string) (http.Handler, SSEStreamControl) {
+	var initialData []byte
+	if initialEvent != nil {
+		initialData = initialEvent.Bytes()
+	}
+	handler, streamControl := ChunkedStreamingHandler(
+		initialData,
+		"text/event-stream; charset=utf-8",
+		ChunkedStreamingHandlerOptionEnvironmentID(environmentID),
+	)
+	return handler, &sseStreamControlImpl{streamControl}
+}
+
 func (s *sseStreamControlImpl) Enqueue(event SSEEvent) {
 	s.streamControl.Enqueue(event.Bytes())
 }

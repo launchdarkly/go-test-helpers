@@ -50,3 +50,29 @@ data: data3
 `, string(data))
 	})
 }
+
+func TestSSEHandlerWithEnvironmentID(t *testing.T) {
+	initialEvent := SSEEvent{"id1", "event1", "data1", 0}
+	handler, stream := SSEHandlerWithEnvironmentID(&initialEvent, "env-id")
+	defer stream.Close()
+
+	WithServer(handler, func(server *httptest.Server) {
+		resp1, err := http.DefaultClient.Get(server.URL)
+		require.NoError(t, err)
+		defer resp1.Body.Close()
+
+		assert.Equal(t, 200, resp1.StatusCode)
+		assert.Equal(t, "text/event-stream; charset=utf-8", resp1.Header.Get("Content-Type"))
+		assert.Equal(t, "env-id", resp1.Header.Get("X-Ld-Envid"))
+
+		stream.EndAll()
+
+		data, err := io.ReadAll(resp1.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, `id: id1
+event: event1
+data: data1
+
+`, string(data))
+	})
+}

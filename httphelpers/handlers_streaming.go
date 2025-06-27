@@ -25,6 +25,25 @@ type StreamControl interface {
 	Close() error
 }
 
+// ChunkedStreamingHandlerOption is a common interface for optional configuration parameters that
+// can be used in creating a ChunkedStreamingHandler.
+type ChunkedStreamingHandlerOption interface {
+	apply(h *chunkedStreamingHandlerImpl)
+}
+
+type environmentIDChunkedStreamingHandlerOption string
+
+func (o environmentIDChunkedStreamingHandlerOption) apply(h *chunkedStreamingHandlerImpl) {
+	h.environmentID = string(o)
+}
+
+// ChunkedStreamingHandlerOptionEnvironmentID returns an option that sets the environment ID
+// for a ChunkedStreamingHandler when the handler is created. The environment ID will be
+// returned in the response header X-Ld-Envid.
+func ChunkedStreamingHandlerOptionEnvironmentID(environmentID string) ChunkedStreamingHandlerOption {
+	return environmentIDChunkedStreamingHandlerOption(environmentID)
+}
+
 // ChunkedStreamingHandler creates an HTTP handler that streams arbitrary data using chunked encoding.
 //
 // The initialData parameter, if not nil, specifies a starting chunk that should always be sent to any
@@ -52,21 +71,29 @@ type StreamControl interface {
 //	        }
 //	    }
 //	}()
-func ChunkedStreamingHandler(initialChunk []byte, contentType string) (http.Handler, StreamControl) {
+func ChunkedStreamingHandler(
+	initialChunk []byte,
+	contentType string,
+	options ...ChunkedStreamingHandlerOption,
+) (http.Handler, StreamControl) {
 	sh := &chunkedStreamingHandlerImpl{
 		initialChunk: initialChunk,
 		contentType:  contentType,
+	}
+	for _, o := range options {
+		o.apply(sh)
 	}
 	return sh, sh
 }
 
 type chunkedStreamingHandlerImpl struct {
-	initialChunk []byte
-	contentType  string
-	queued       [][]byte
-	channels     []chan []byte
-	closed       bool
-	lock         sync.Mutex
+	initialChunk  []byte
+	contentType   string
+	queued        [][]byte
+	channels      []chan []byte
+	closed        bool
+	lock          sync.Mutex
+	environmentID string
 }
 
 func (s *chunkedStreamingHandlerImpl) Enqueue(data []byte) {
@@ -173,6 +200,9 @@ func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, _ *http.R
 	h := w.Header()
 	h.Set("Content-Type", s.contentType)
 	h.Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	if len(s.environmentID) > 0 {
+		h.Set("X-Ld-Envid", s.environmentID)
+	}
 
 	if s.initialChunk != nil {
 		_, _ = w.Write(s.initialChunk)
