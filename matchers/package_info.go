@@ -3,7 +3,7 @@
 // negated, or combined in various ways.
 //
 // This implementation is for Go 1.17 so it does not yet have generics. Instead, all matchers take
-// values of type interface{} and must explicitly cast the type if needed. The simplest way to
+// values of type any and must explicitly cast the type if needed. The simplest way to
 // provide type safety is to use Matcher.EnsureType().
 //
 // Examples of syntax:

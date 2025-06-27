@@ -10,7 +10,7 @@ import (
 //	// failure message will describe expectation as "not (equal to 3)"
 func Not(matcher Matcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			return !matcher.test(value)
 		},
 		func() string {
@@ -24,7 +24,7 @@ func Not(matcher Matcher) Matcher {
 // the failure message describes all of the Matchers that failed.
 func AllOf(matchers ...Matcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			for _, m := range matchers {
 				if !m.test(value) {
 					return false
@@ -35,7 +35,7 @@ func AllOf(matchers ...Matcher) Matcher {
 		func() string {
 			return describeMatchers(matchers, " and ")
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			return describeFailures(matchers, value)
 		},
 	)
@@ -46,7 +46,7 @@ func AllOf(matchers ...Matcher) Matcher {
 // message describes all of the failure conditions.
 func AnyOf(matchers ...Matcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			for _, m := range matchers {
 				if m.test(value) {
 					return true
@@ -57,7 +57,7 @@ func AnyOf(matchers ...Matcher) Matcher {
 		func() string {
 			return describeMatchers(matchers, " and ")
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			return describeFailures(matchers, value)
 		},
 	)

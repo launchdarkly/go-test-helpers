@@ -9,6 +9,6 @@ func TestEqual(t *testing.T) {
 	assertPasses(t, 3, Equal(float64(3)))
 	assertPasses(t, float64(3), Equal(3))
 
-	assertPasses(t, map[string]interface{}{"a": []int{1, 2}},
-		Equal(map[string]interface{}{"a": []int{1, 2}}))
+	assertPasses(t, map[string]any{"a": []int{1, 2}},
+		Equal(map[string]any{"a": []int{1, 2}}))
 }

@@ -81,7 +81,7 @@ func SandboxTest(action func(TestingT)) SandboxResult {
 	}
 }
 
-func (m *mockTestingT) Errorf(format string, args ...interface{}) {
+func (m *mockTestingT) Errorf(format string, args ...any) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	m.failed = true
@@ -113,7 +113,7 @@ func (m *mockTestingT) Failed() bool {
 	return m.failed
 }
 
-func (m *mockTestingT) Skip(args ...interface{}) {
+func (m *mockTestingT) Skip(args ...any) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	m.skipped = true

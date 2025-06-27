@@ -102,7 +102,7 @@ func TestValueForKey(t *testing.T) {
 
 func TestOptValueForKey(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2}
-	m2 := map[string]interface{}{"a": 1, "b": 2}
+	m2 := map[string]any{"a": 1, "b": 2}
 
 	assertPasses(t, m1, OptValueForKey("b").Should(Equal(2)))
 

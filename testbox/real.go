@@ -13,7 +13,7 @@ func RealTest(t *testing.T) TestingT {
 	return realTestingT{t}
 }
 
-func (r realTestingT) Errorf(format string, args ...interface{}) {
+func (r realTestingT) Errorf(format string, args ...any) {
 	r.t.Errorf(format, args...) // COVERAGE: can't do this in test_sandbox_test; it'll cause a real failure
 }
 
@@ -29,7 +29,7 @@ func (r realTestingT) Failed() bool {
 	return r.t.Failed()
 }
 
-func (r realTestingT) Skip(args ...interface{}) {
+func (r realTestingT) Skip(args ...any) {
 	r.t.Skip(args...)
 }
 

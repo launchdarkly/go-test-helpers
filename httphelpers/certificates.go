@@ -49,7 +49,7 @@ func WithSelfSignedServer(handler http.Handler, action func(*httptest.Server, []
 	if err != nil {
 		panic(fmt.Errorf("can't create self-signed certificate: %s", err))
 	}
-	certData, err := os.ReadFile(certFilePath) //nolint:gosec
+	certData, err := os.ReadFile(certFilePath)
 	if err != nil {
 		panic(fmt.Errorf("can't read self-signed certificate: %s", err))
 	}
@@ -132,7 +132,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	certOut, err := os.Create(certFilePath) //nolint:gosec
+	certOut, err := os.Create(certFilePath)
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 		return err
 	}
 
-	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600) //nolint:gosec
+	keyOut, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
@@ -160,7 +160,7 @@ func MakeSelfSignedCert(certFilePath, keyFilePath string) error {
 	return nil
 }
 
-func pemBlockForKey(priv interface{}) (*pem.Block, error) {
+func pemBlockForKey(priv any) (*pem.Block, error) {
 	switch k := priv.(type) {
 	case *rsa.PrivateKey:
 		return &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(k)}, nil
@@ -175,7 +175,7 @@ func pemBlockForKey(priv interface{}) (*pem.Block, error) {
 	}
 }
 
-func publicKey(priv interface{}) interface{} {
+func publicKey(priv any) any {
 	switch k := priv.(type) {
 	case *rsa.PrivateKey:
 		return &k.PublicKey

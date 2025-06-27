@@ -9,7 +9,7 @@ import (
 
 func TestJValueOf(t *testing.T) {
 	s := `{"a":true}`
-	m := map[string]interface{}{"a": true}
+	m := map[string]any{"a": true}
 
 	v1 := JValueOf([]byte(s))
 	assert.Nil(t, v1.Error())

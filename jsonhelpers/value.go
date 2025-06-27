@@ -62,7 +62,7 @@ func JValueOf(value any) JValue {
 		}
 		data = d
 	}
-	var intf interface{}
+	var intf any
 	if err := json.Unmarshal(data, &intf); err != nil {
 		return JValue{
 			raw:    string(data),

@@ -9,7 +9,7 @@ import (
 func stringLength() MatcherTransform {
 	return Transform(
 		"string length",
-		func(value interface{}) (interface{}, error) { return len(value.(string)), nil },
+		func(value any) (any, error) { return len(value.(string)), nil },
 	)
 }
 
@@ -32,7 +32,7 @@ func TestTransformEnsureType(t *testing.T) {
 func TestTransformError(t *testing.T) {
 	stringLengthForLowercaseStringsOnly := Transform(
 		"string length",
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			if strings.ToLower(value.(string)) == value.(string) {
 				return len(value.(string)), nil
 			}

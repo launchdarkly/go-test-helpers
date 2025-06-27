@@ -40,7 +40,7 @@ type JSONDiffElement struct {
 
 // Describe returns a string description of this difference.
 func (e JSONDiffElement) Describe(value1Name, value2Name string) string {
-	var desc1, desc2 = e.Value1, e.Value2
+	desc1, desc2 := e.Value1, e.Value2
 	if desc1 == "" {
 		desc1 = "<absent>"
 	}
@@ -117,7 +117,7 @@ type JSONPathComponent struct {
 // Values that are not of the same type will always produce a single JSONDiffElement
 // describing the entire values.
 func JSONDiff(json1, json2 []byte) (JSONDiffResult, error) {
-	var value1, value2 interface{}
+	var value1, value2 any
 	if err := json.Unmarshal(json1, &value1); err != nil {
 		return nil, err
 	}
@@ -127,14 +127,14 @@ func JSONDiff(json1, json2 []byte) (JSONDiffResult, error) {
 	return describeValueDifference(value1, value2, nil), nil
 }
 
-func describeValueDifference(value1, value2 interface{}, path JSONPath) JSONDiffResult {
-	if a1, ok := value1.([]interface{}); ok {
-		if a2, ok := value2.([]interface{}); ok {
+func describeValueDifference(value1, value2 any, path JSONPath) JSONDiffResult {
+	if a1, ok := value1.([]any); ok {
+		if a2, ok := value2.([]any); ok {
 			return describeArrayValueDifference(a1, a2, path)
 		}
 	}
-	if o1, ok := value1.(map[string]interface{}); ok {
-		if o2, ok := value2.(map[string]interface{}); ok {
+	if o1, ok := value1.(map[string]any); ok {
+		if o2, ok := value2.(map[string]any); ok {
 			return describeObjectValueDifference(o1, o2, path)
 		}
 	}
@@ -146,7 +146,7 @@ func describeValueDifference(value1, value2 interface{}, path JSONPath) JSONDiff
 	}
 }
 
-func describeArrayValueDifference(array1, array2 []interface{}, path JSONPath) JSONDiffResult {
+func describeArrayValueDifference(array1, array2 []any, path JSONPath) JSONDiffResult {
 	if len(array1) != len(array2) {
 		// Check for the case where one is a shorter version of the other but the same up to that point
 		if len(array1) != 0 && len(array2) != 0 {
@@ -162,7 +162,7 @@ func describeArrayValueDifference(array1, array2 []interface{}, path JSONPath) J
 				}
 			}
 			if !foundUnequal {
-				var remainder []interface{}
+				var remainder []any
 				if len(array1) == shortestCommonLength {
 					remainder = array2[shortestCommonLength:]
 				} else {
@@ -196,7 +196,7 @@ func describeArrayValueDifference(array1, array2 []interface{}, path JSONPath) J
 	return diffs
 }
 
-func describeObjectValueDifference(object1, object2 map[string]interface{}, path JSONPath) JSONDiffResult {
+func describeObjectValueDifference(object1, object2 map[string]any, path JSONPath) JSONDiffResult {
 	allKeys := make(map[string]struct{})
 	for key := range object1 {
 		allKeys[key] = struct{}{}
@@ -215,7 +215,7 @@ func describeObjectValueDifference(object1, object2 map[string]interface{}, path
 	for _, key := range allSortedKeys {
 		subpath := append(append(JSONPath(nil), path...), JSONPathComponent{Property: key})
 
-		var desc1, desc2 = "", ""
+		desc1, desc2 := "", ""
 		if value1, ok := object1[key]; ok {
 			if value2, ok := object2[key]; ok {
 				if reflect.DeepEqual(value1, value2) {
@@ -223,9 +223,9 @@ func describeObjectValueDifference(object1, object2 map[string]interface{}, path
 				}
 				diffs = append(diffs, describeValueDifference(value1, value2, subpath)...)
 				continue
-			} else {
-				desc1 = string(CanonicalizeJSON(ToJSON(value1)))
 			}
+
+			desc1 = string(CanonicalizeJSON(ToJSON(value1)))
 		} else {
 			desc2 = string(CanonicalizeJSON(ToJSON(object2[key])))
 		}

@@ -7,15 +7,15 @@ import (
 
 // Equal is a matcher that tests whether the input value matches the expected value according
 // to reflect.DeepEqual, except in the case of numbers where an exact type match is not needed.
-func Equal(expectedValue interface{}) Matcher {
+func Equal(expectedValue any) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			return reflect.DeepEqual(canonicalizeValue(value), canonicalizeValue(expectedValue))
 		},
 		func() string {
 			return fmt.Sprintf("equal to %s", DescribeValue(expectedValue))
 		},
-		func(value interface{}) string {
+		func(_ any) string {
 			return fmt.Sprintf("did not equal %s", DescribeValue(expectedValue))
 		},
 	)
@@ -25,7 +25,7 @@ func Equal(expectedValue interface{}) Matcher {
 // nil slice, or a nil map.
 func BeNil() Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			if value == nil {
 				return true
 			}
@@ -39,7 +39,7 @@ func BeNil() Matcher {
 		func() string {
 			return "is nil"
 		},
-		func(value interface{}) string {
+		func(_ any) string {
 			return "was not nil"
 		},
 	)
@@ -47,7 +47,7 @@ func BeNil() Matcher {
 
 // Automatic numeric type conversion for use with Equals(), to avoid the common problem of
 // expecting for instance int(1) in a JSON data structure which parsed it as float64(1).
-func canonicalizeValue(value interface{}) interface{} {
+func canonicalizeValue(value any) any {
 	switch v := value.(type) {
 	case uint8:
 		return uint64(v)

@@ -7,7 +7,7 @@ import (
 
 func TestJSONEqual(t *testing.T) {
 	t.Run("simple values", func(t *testing.T) {
-		for _, value := range []interface{}{nil, true, false, 3, 3.5, "x"} {
+		for _, value := range []any{nil, true, false, 3, 3.5, "x"} {
 			jsonValue, _ := json.Marshal(value)
 			t.Run(string(jsonValue), func(t *testing.T) {
 				assertPasses(t, value, JSONEqual(value))
@@ -19,9 +19,9 @@ func TestJSONEqual(t *testing.T) {
 	})
 
 	t.Run("deep equality", func(t *testing.T) {
-		for _, value := range []interface{}{
+		for _, value := range []any{
 			[]string{"a", "b"},
-			map[string]interface{}{"a": []int{1, 2}},
+			map[string]any{"a": []int{1, 2}},
 		} {
 			jsonValue, _ := json.Marshal(value)
 			t.Run(string(jsonValue), func(t *testing.T) {
