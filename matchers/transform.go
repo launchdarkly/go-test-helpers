@@ -12,7 +12,7 @@ import (
 // data structure. Assuming there is a struct type S with a field F, you could do this:
 //
 //	SF := matchers.Transform("F",
-//	    func(value interface{}) interface{} { return value.(S).F })
+//	    func(value any) any { return value.(S).F })
 //	SF.Should(Equal(3)).Assert(t, someInstanceOfS)
 //
 // The advantages of doing this, instead of simply getting the F field directly and
@@ -28,8 +28,8 @@ import (
 // You can use MatcherTransform's other methods to add type safety.
 type MatcherTransform struct {
 	name         string
-	getValue     func(interface{}) (interface{}, error)
-	expectedType interface{}
+	getValue     func(any) (any, error)
+	expectedType any
 }
 
 // Transform creates a MatcherTransform. The name parameter is a brief description of what
@@ -39,7 +39,7 @@ type MatcherTransform struct {
 // function that transforms the original value into the value you will be testing.
 func Transform(
 	name string,
-	getValue func(interface{}) (interface{}, error),
+	getValue func(any) (any, error),
 ) MatcherTransform {
 	return MatcherTransform{name: name, getValue: getValue}
 }
@@ -49,9 +49,9 @@ func Transform(
 // wrong type is passed in.
 //
 //	stringLength := matchers.Transform("string length",
-//	    func(value interface{}) interface{} { return len(value.(string)) }).
+//	    func(value any) any { return len(value.(string)) }).
 //	    EnsureInputValueType("")
-func (mt MatcherTransform) EnsureInputValueType(valueOfType interface{}) MatcherTransform {
+func (mt MatcherTransform) EnsureInputValueType(valueOfType any) MatcherTransform {
 	mt.expectedType = valueOfType
 	return mt
 }
@@ -61,10 +61,10 @@ func (mt MatcherTransform) EnsureInputValueType(valueOfType interface{}) Matcher
 // converts it to B, and applies Equal(3) to B.
 func (mt MatcherTransform) Should(matcher Matcher) Matcher {
 	if mt.getValue == nil {
-		mt.getValue = func(value interface{}) (interface{}, error) { return value, nil }
+		mt.getValue = func(value any) (any, error) { return value, nil }
 	}
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			newValue, err := mt.getValue(value)
 			if err != nil {
 				return false
@@ -78,7 +78,7 @@ func (mt MatcherTransform) Should(matcher Matcher) Matcher {
 			}
 			return ret + matcher.describeTest()
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			newValue, err := mt.getValue(value)
 			if err != nil {
 				return err.Error()
@@ -97,7 +97,7 @@ func (mt MatcherTransform) Should(matcher Matcher) Matcher {
 func Length() MatcherTransform {
 	return Transform(
 		"length",
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			v := reflect.ValueOf(value)
 			t := v.Type()
 			switch t.Kind() {

@@ -30,7 +30,7 @@ import (
 // with DescribeValue.
 //
 // At last resort, it is formatted with fmt.Sprintf("%+v").
-func DescribeValue(value interface{}) string {
+func DescribeValue(value any) string {
 	if value == nil {
 		return "nil"
 	}
@@ -65,7 +65,7 @@ func DescribeValue(value interface{}) string {
 	}
 }
 
-func isJSONTaggedStruct(value interface{}) bool {
+func isJSONTaggedStruct(value any) bool {
 	t := reflect.TypeOf(value)
 	if t.Kind() != reflect.Struct {
 		return false
@@ -94,7 +94,7 @@ func describeMatchers(matchers []Matcher, separator string) string {
 	return strings.Join(parts, separator)
 }
 
-func describeFailures(matchers []Matcher, value interface{}) string {
+func describeFailures(matchers []Matcher, value any) string {
 	var fails []string
 	for _, m := range matchers {
 		if !m.test(value) {

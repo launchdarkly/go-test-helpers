@@ -22,10 +22,10 @@ import (
 //
 // The shortcut JSONEqualStr can be used to avoid writing []byte() if the expected value is
 // already a serialized JSON string.
-func JSONEqual(expectedValue interface{}) Matcher {
+func JSONEqual(expectedValue any) Matcher {
 	expectedIntf, expectedValueErr := toJSONInterface(expectedValue)
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			if expectedValueErr != nil {
 				return false
 			}
@@ -38,7 +38,7 @@ func JSONEqual(expectedValue interface{}) Matcher {
 		func() string {
 			return fmt.Sprintf("JSON equal to %s", jsonhelpers.CanonicalizeJSON(jsonhelpers.ToJSON(expectedIntf)))
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			if expectedValueErr != nil {
 				return fmt.Sprintf("bad expected value in assertion (%s)", expectedValueErr)
 			}
@@ -67,7 +67,7 @@ func JSONEqual(expectedValue interface{}) Matcher {
 //	matchers.In(t).Assert(`{"a": true, "b": false`,
 //	    matchers.JSONStrEqual(`{"b": false, "a": true}`)
 func JSONStrEqual(expectedValue string) Matcher {
-	return Transform("", func(value interface{}) (interface{}, error) {
+	return Transform("", func(value any) (any, error) {
 		if s, ok := value.(string); ok {
 			return []byte(s), nil
 		}
@@ -88,7 +88,7 @@ func JSONStrEqual(expectedValue string) Matcher {
 func JSONProperty(name string) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("JSON property %q", name),
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			m, err := toJSONObjectMap(value)
 			if err != nil {
 				return nil, err
@@ -106,7 +106,7 @@ func JSONProperty(name string) MatcherTransform {
 func JSONOptProperty(name string) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("JSON property %q", name),
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			m, err := toJSONObjectMap(value)
 			if err != nil {
 				return nil, err
@@ -117,7 +117,7 @@ func JSONOptProperty(name string) MatcherTransform {
 }
 
 // JSONArray is a MatcherTransform that takes any value serializable as a JSON array, and converts
-// it to []interface{} slice; then you can apply a matcher to that slice. It fails if the value is
+// it to []any slice; then you can apply a matcher to that slice. It fails if the value is
 // not serializable as a JSON array.
 //
 //	myArray := []byte(`["a", "b", "c"]`)
@@ -126,12 +126,12 @@ func JSONOptProperty(name string) MatcherTransform {
 func JSONArray() MatcherTransform {
 	return Transform(
 		"JSON array",
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			v, err := toJSONInterface(value)
 			if err != nil {
 				return nil, err
 			}
-			if s, ok := v.([]interface{}); ok {
+			if s, ok := v.([]any); ok {
 				return s, nil
 			}
 			return nil, errors.New("wanted a JSON array but found a different type")
@@ -140,7 +140,7 @@ func JSONArray() MatcherTransform {
 }
 
 // JSONMap is a MatcherTransform that takes any value serializable as a JSON object, and converts
-// it to a map[interface{}]interface{}; then you can apply a matcher to that map. It fails if the
+// it to a map[any]any; then you can apply a matcher to that map. It fails if the
 // value is not serializable as a JSON object.
 //
 //	myArray := []byte(`{"a": 1, "b": "xyz"}`)
@@ -153,7 +153,7 @@ func JSONArray() MatcherTransform {
 func JSONMap() MatcherTransform {
 	return Transform(
 		"JSON map",
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			m, err := toJSONObjectMap(value)
 			if err != nil {
 				return nil, err
@@ -163,7 +163,7 @@ func JSONMap() MatcherTransform {
 	)
 }
 
-func toJSONInterface(value interface{}) (interface{}, error) {
+func toJSONInterface(value any) (any, error) {
 	var data []byte
 	switch v := value.(type) {
 	case json.RawMessage:
@@ -177,24 +177,24 @@ func toJSONInterface(value interface{}) (interface{}, error) {
 		}
 		data = d
 	}
-	var intf interface{}
+	var intf any
 	if err := json.Unmarshal(data, &intf); err != nil {
 		return nil, fmt.Errorf("value was not valid JSON: %s", err)
 	}
 	return intf, nil
 }
 
-func toJSONObjectMap(value interface{}) (map[string]interface{}, error) {
+func toJSONObjectMap(value any) (map[string]any, error) {
 	valueIntf, err := toJSONInterface(value)
 	if err != nil {
 		return nil, err
 	}
-	if m, ok := valueIntf.(map[string]interface{}); ok {
+	if m, ok := valueIntf.(map[string]any); ok {
 		return m, nil
 	}
 	if s, ok := valueIntf.(string); ok {
 		if strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}") {
-			var m map[string]interface{}
+			var m map[string]any
 			if err := json.Unmarshal([]byte(s), &m); err == nil {
 				return m, nil
 			}

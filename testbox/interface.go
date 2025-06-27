@@ -56,7 +56,7 @@ type TestingT interface {
 
 	// Skip marks the test as skipped and exits early, logging a message. It is equivalent to the same
 	// method in testing.T.
-	Skip(args ...interface{})
+	Skip(args ...any)
 
 	// SkipNow marks the test as skipped and exits early. It is equivalent to the same method in testing.T.
 	SkipNow()

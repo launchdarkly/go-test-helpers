@@ -16,7 +16,7 @@ func TestJSONDiff(t *testing.T) {
 	}
 
 	t.Run("equality and inequality without detailed diff", func(t *testing.T) {
-		values := []interface{}{
+		values := []any{
 			nil,
 			true,
 			false,
@@ -24,7 +24,7 @@ func TestJSONDiff(t *testing.T) {
 			3.5,
 			"x",
 			[]string{"a", "b"},
-			map[string]interface{}{"a": []int{1, 2}},
+			map[string]any{"a": []int{1, 2}},
 		}
 		for i, value1 := range values {
 			jsonValue1, _ := json.Marshal(value1)

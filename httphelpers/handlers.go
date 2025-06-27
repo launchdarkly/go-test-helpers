@@ -88,7 +88,7 @@ func HandlerForPathRegex(pathRegex string, handlerForPath http.Handler, defaultH
 
 // HandlerWithJSONResponse creates an HTTP handler that returns a 200 status and the JSON encoding of
 // the specified object.
-func HandlerWithJSONResponse(contentToEncode interface{}, additionalHeaders http.Header) http.Handler {
+func HandlerWithJSONResponse(contentToEncode any, additionalHeaders http.Header) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		bytes, err := json.Marshal(contentToEncode)
 		if err != nil {

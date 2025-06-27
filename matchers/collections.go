@@ -10,12 +10,12 @@ import (
 
 // KeyValueMatcher is used with MapOf or MapIncluding to describe a matcher for a key-value pair in a map.
 type KeyValueMatcher struct {
-	Key   interface{}
+	Key   any
 	Value Matcher
 }
 
 // KV is a shortcut for constructing a KeyValueMatcher for use with MapOf or MapIncluding.
-func KV(key interface{}, valueMatcher Matcher) KeyValueMatcher {
+func KV(key any, valueMatcher Matcher) KeyValueMatcher {
 	return KeyValueMatcher{Key: key, Value: valueMatcher}
 }
 
@@ -27,7 +27,7 @@ func KV(key interface{}, valueMatcher Matcher) KeyValueMatcher {
 //	matchers.Items(matchers.Equal(2), matchers.Equal(6)).Test(s) // fail
 func Items(matchers ...Matcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			elements, err := getSliceOrArrayElementValues(value)
 			if err != nil || len(elements) != len(matchers) {
 				return false
@@ -43,7 +43,7 @@ func Items(matchers ...Matcher) Matcher {
 		func() string {
 			return "items: " + describeMatchers(matchers, "")
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			elements, err := getSliceOrArrayElementValues(value)
 			if err != nil {
 				return err.Error()
@@ -70,7 +70,7 @@ func Items(matchers ...Matcher) Matcher {
 //	matchers.ItemsInAnyOrder(matchers.Equal(2), matchers.Equal(6)).Test(s) // pass
 func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			elements, err := getSliceOrArrayElementValues(value)
 			if err != nil || len(elements) != len(matchers) {
 				return false
@@ -89,7 +89,7 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 		func() string {
 			return "items in any order: " + describeMatchers(matchers, ", ")
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			// Describing a failure for ItemsInAnyOrder requires us to repeat the matching logic we
 			// previously executed, but in a bit more detail. For any matcher that successfully
 			// matched an item, we don't need to describe that matcher or that item.
@@ -99,7 +99,7 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 			}
 			type unmatchedElement struct {
 				index int
-				value interface{}
+				value any
 			}
 			unmatchedElements := make([]unmatchedElement, 0)
 			for i, e := range elements {
@@ -151,7 +151,7 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 //	}).Test(s) // pass
 func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			valueAsMap, err := getMapValues(value)
 			if err != nil || len(valueAsMap) != len(keyValueMatchers) {
 				return false
@@ -174,7 +174,7 @@ func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 			}
 			return "map: {" + strings.Join(parts, ", ") + "}"
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			valueAsMap, err := getMapValues(value)
 			if err != nil {
 				return err.Error()
@@ -209,7 +209,7 @@ func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 //	}).Test(s) // pass
 func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 	return New(
-		func(value interface{}) bool {
+		func(value any) bool {
 			valueAsMap, err := getMapValues(value)
 			if err != nil {
 				return false
@@ -232,7 +232,7 @@ func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 			}
 			return "map including: {" + strings.Join(parts, ", ") + "}"
 		},
-		func(value interface{}) string {
+		func(value any) string {
 			valueAsMap, err := getMapValues(value)
 			if err != nil {
 				return err.Error()
@@ -252,24 +252,24 @@ func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 	)
 }
 
-func getSliceOrArrayElementValues(sliceValue interface{}) ([]interface{}, error) {
+func getSliceOrArrayElementValues(sliceValue any) ([]any, error) {
 	v := reflect.ValueOf(sliceValue)
 	if v.Type().Kind() != reflect.Slice && v.Type().Kind() != reflect.Array {
 		return nil, fmt.Errorf("expected slice or array value but got %T", sliceValue)
 	}
-	ret := make([]interface{}, 0, v.Len())
+	ret := make([]any, 0, v.Len())
 	for i := 0; i < v.Len(); i++ {
 		ret = append(ret, v.Index(i).Interface())
 	}
 	return ret, nil
 }
 
-func getMapValues(mapValue interface{}) (map[interface{}]interface{}, error) {
+func getMapValues(mapValue any) (map[any]any, error) {
 	v := reflect.ValueOf(mapValue)
 	if v.Type().Kind() != reflect.Map {
 		return nil, fmt.Errorf("expected map value but got %T", mapValue)
 	}
-	ret := make(map[interface{}]interface{}, v.Len())
+	ret := make(map[any]any, v.Len())
 	for _, k := range v.MapKeys() {
 		ret[k.Interface()] = v.MapIndex(k).Interface()
 	}
@@ -285,7 +285,7 @@ func getSortedExpectedKeys(keyValueMatchers []KeyValueMatcher) []string {
 	return ret
 }
 
-func getSortedMapKeys(mapValue interface{}) []string {
+func getSortedMapKeys(mapValue any) []string {
 	v := reflect.ValueOf(mapValue)
 	if v.Type().Kind() != reflect.Map {
 		return nil
@@ -306,10 +306,10 @@ func getSortedMapKeys(mapValue interface{}) []string {
 //	matchers.In(t).Assert(myObject,
 //	    matchers.ValueForKey("a").Should(
 //	        matchers.ValueForKey("b").Should(Equal(2))))
-func ValueForKey(key interface{}) MatcherTransform {
+func ValueForKey(key any) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("for key %s", DescribeValue(key)),
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			if value == nil {
 				return nil, errors.New("map was nil")
 			}
@@ -335,10 +335,10 @@ func ValueForKey(key interface{}) MatcherTransform {
 //	matchers.In(t).Assert(myMap,
 //	    matchers.OptValueForKey("a").Should(
 //	        matchers.OptValueForKey("c").Should(Equal(0))))
-func OptValueForKey(key interface{}) MatcherTransform {
+func OptValueForKey(key any) MatcherTransform {
 	return Transform(
 		fmt.Sprintf("for key %s", DescribeValue(key)),
-		func(value interface{}) (interface{}, error) {
+		func(value any) (any, error) {
 			if value == nil {
 				return nil, nil
 			}

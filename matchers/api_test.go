@@ -13,15 +13,15 @@ type decoratedString string
 
 func (s decoratedString) String() string { return decorate(string(s)) }
 
-func decorate(value interface{}) string { return fmt.Sprintf("Hi, I'm '%s'", value.(string)) }
+func decorate(value any) string { return fmt.Sprintf("Hi, I'm '%s'", value.(string)) }
 
-func assertPasses(t *testing.T, value interface{}, m Matcher) {
+func assertPasses(t *testing.T, value any, m Matcher) {
 	pass, desc := m.Test(value)
 	assert.True(t, pass)
 	assert.Equal(t, "", desc)
 }
 
-func assertFails(t *testing.T, value interface{}, m Matcher, expectedDesc string) {
+func assertFails(t *testing.T, value any, m Matcher, expectedDesc string) {
 	pass, desc := m.Test(value)
 	assert.False(t, pass)
 	if strings.Contains(expectedDesc, "full value was:") {
@@ -38,7 +38,7 @@ func TestUninitializedMatcher(t *testing.T) {
 
 func TestSimpleMatcher(t *testing.T) {
 	m := New(
-		func(value interface{}) bool { return value == "good" },
+		func(value any) bool { return value == "good" },
 		func() string { return "should be good" },
 		nil,
 	)
@@ -48,9 +48,9 @@ func TestSimpleMatcher(t *testing.T) {
 
 func TestSimpleMatcherWithFailureDescription(t *testing.T) {
 	m := New(
-		func(value interface{}) bool { return value == "good" },
+		func(value any) bool { return value == "good" },
 		func() string { return "should be good" },
-		func(interface{}) string { return "was not good" },
+		func(any) string { return "was not good" },
 	)
 	assertPasses(t, "good", m)
 	assertFails(t, "bad", m, `was not good`+"\n"+`full value was: "bad"`)
@@ -58,7 +58,7 @@ func TestSimpleMatcherWithFailureDescription(t *testing.T) {
 
 func TestEnsureType(t *testing.T) {
 	m := New(
-		func(value interface{}) bool { return value == "good" },
+		func(value any) bool { return value == "good" },
 		func() string { return "should be good" },
 		nil,
 	)
@@ -77,7 +77,7 @@ func TestEnsureType(t *testing.T) {
 
 func TestMatcherUsesDescribeValue(t *testing.T) {
 	m := New(
-		func(value interface{}) bool { return value == decoratedString("good") },
+		func(value any) bool { return value == decoratedString("good") },
 		func() string { return "should be good" },
 		nil,
 	)

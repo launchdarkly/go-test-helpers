@@ -4,7 +4,7 @@ package matchers
 // failures, and a FailNow method for stopping the test immediately. This is compatible with
 // Go's testing.T, and with assert.TestingT and require.TestingT. See Test and For.
 type TestingT interface {
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 	FailNow()
 }
 
@@ -58,7 +58,7 @@ func (a AssertionScope) For(name string) AssertionScope {
 // Assert is for use with any test framework that has a test scope type with the same Errorf
 // method as Go's testing.T. It tests a value against a matcher and, on failure, calls the test
 // scope's Errorf method. This logs a failure but does not stop the test.
-func (a AssertionScope) Assert(value interface{}, matcher Matcher) bool {
+func (a AssertionScope) Assert(value any, matcher Matcher) bool {
 	if pass, desc := matcher.Test(value); !pass {
 		if h, ok := a.t.(helperT); ok {
 			h.Helper()
@@ -73,7 +73,7 @@ func (a AssertionScope) Assert(value interface{}, matcher Matcher) bool {
 // and FailNow methods as Go's testing.T. It tests a value against a matcher and, on failure, calls
 // the test scope's Errorf method and then FailNow. This logs a failure and immediately terminates
 // the test.
-func (a AssertionScope) Require(value interface{}, matcher Matcher) bool {
+func (a AssertionScope) Require(value any, matcher Matcher) bool {
 	if pass, desc := matcher.Test(value); !pass {
 		if h, ok := a.t.(helperT); ok {
 			h.Helper()

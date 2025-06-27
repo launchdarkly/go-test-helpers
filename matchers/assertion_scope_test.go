@@ -13,7 +13,7 @@ type fakeTestScope struct {
 	terminated bool
 }
 
-func (t *fakeTestScope) Errorf(format string, args ...interface{}) {
+func (t *fakeTestScope) Errorf(format string, args ...any) {
 	t.failures = append(t.failures, fmt.Sprintf(format, args...))
 }
 
