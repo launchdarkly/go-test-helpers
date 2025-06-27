@@ -57,6 +57,6 @@ func WithTempDir(f func(path string)) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(path) //nolint:errcheck
+	defer os.RemoveAll(path)
 	f(path)
 }
