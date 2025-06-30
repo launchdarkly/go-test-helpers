@@ -28,7 +28,6 @@ jobs:
           echo "latest=${{ fromJSON(env.fetch-api-data)[0].cycle }}" >> $GITHUB_OUTPUT
           echo "penultimate=${{ fromJSON(env.fetch-api-data)[1].cycle }}" >> $GITHUB_OUTPUT
 
-
   create-prs:
     permissions:
       contents: write
@@ -37,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        branch: ["v3"]
+        branch: ["main"]
       fail-fast: false
     env:
       officialLatestVersion: ${{ needs.check-go-eol.outputs.latest }}
@@ -49,7 +48,7 @@ jobs:
 
       - name: Get current Go versions
         id: go-versions
-        run:  cat ./.github/variables/go-versions.env > $GITHUB_OUTPUT
+        run: cat ./.github/variables/go-versions.env > $GITHUB_OUTPUT
 
       - name: Update go-versions.env and README.md
         if: steps.go-versions.outputs.latest != env.officialLatestVersion

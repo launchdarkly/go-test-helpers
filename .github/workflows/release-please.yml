@@ -3,7 +3,7 @@ name: Run Release Please
 on:
   push:
     branches:
-      - v3
+      - main
   workflow_dispatch:
 
 jobs:
@@ -12,4 +12,4 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          target-branch: v3
+          target-branch: main
