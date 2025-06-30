@@ -60,7 +60,7 @@ jobs:
 
       - name: Create pull request
         if: steps.update-go-versions.outcome == 'success'
-        uses: peter-evans/create-pull-request@c429d67da83f94001311bba6278e7e666bb828e3 # v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           add-paths: |
