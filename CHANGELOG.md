@@ -2,6 +2,18 @@
 
 All notable changes to the project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.1.0](https://github.com/launchdarkly/go-test-helpers/compare/v3.0.2...v3.1.0) (2025-06-30)
+
+
+### Features
+
+* Adding environmentID support to SSEHandler ([#21](https://github.com/launchdarkly/go-test-helpers/issues/21)) ([77f653d](https://github.com/launchdarkly/go-test-helpers/commit/77f653de72ff863231e5e93dfed5a598588c7c7c))
+
+
+### Bug Fixes
+
+* Bump from go 1.18 to 1.23 ([#22](https://github.com/launchdarkly/go-test-helpers/issues/22)) ([10b5083](https://github.com/launchdarkly/go-test-helpers/commit/10b50836bbc19f11f68a3c227c267d6c2ed10867))
+
 ## [3.0.2] - 2022-08-30
 ### Fixed:
 - Test assertion helpers now call `t.Helper()` to exclude themselves from stacktraces.
