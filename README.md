@@ -1,7 +1,8 @@
 # LaunchDarkly Go Test Helpers
 
-[![Actions Status](https://github.com/launchdarkly/go-test-helpers/actions/workflows/ci.yml/badge.svg?branch=main)]
-[![Documentation](https://img.shields.io/static/v1?label=go.dev&message=reference&color=00add8)](https://pkg.go.dev/github.com/launchdarkly/go-test-helpers)
+
+[![Actions Status](https://github.com/launchdarkly/go-test-helpers/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/launchdarkly/go-test-helpers/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/static/v1?label=go.dev&message=reference&color=00add8)](https://pkg.go.dev/github.com/launchdarkly/go-test-helpers/v3)
 
 This project centralizes some test support code that is used by LaunchDarkly's Go SDK and related components, and that may be useful in other Go projects.
 
