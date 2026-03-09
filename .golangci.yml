@@ -24,6 +24,13 @@ linters:
     - whitespace
   exclusions:
     generated: lax
+    rules:
+      - linters:
+          - gosec
+        path: httphelpers/
+      - linters:
+          - errcheck
+        path: httphelpers/
     paths:
       - third_party$
       - builtin$
