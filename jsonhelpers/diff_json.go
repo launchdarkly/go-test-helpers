@@ -210,7 +210,7 @@ func describeObjectValueDifference(object1, object2 map[string]any, path JSONPat
 	}
 	sort.Strings(allSortedKeys)
 
-	var diffs JSONDiffResult //nolint:prealloc
+	var diffs JSONDiffResult
 
 	for _, key := range allSortedKeys {
 		subpath := append(append(JSONPath(nil), path...), JSONPathComponent{Property: key})

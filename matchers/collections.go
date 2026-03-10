@@ -168,7 +168,7 @@ func MapOf(keyValueMatchers ...KeyValueMatcher) Matcher {
 			return true
 		},
 		func() string {
-			var parts []string
+			parts := make([]string, 0, len(keyValueMatchers))
 			for _, kv := range keyValueMatchers {
 				parts = append(parts, fmt.Sprintf("%s: %s", kv.Key, kv.Value.describeTest()))
 			}
@@ -226,7 +226,7 @@ func MapIncluding(keyValueMatchers ...KeyValueMatcher) Matcher {
 			return true
 		},
 		func() string {
-			var parts []string
+			parts := make([]string, 0, len(keyValueMatchers))
 			for _, kv := range keyValueMatchers {
 				parts = append(parts, fmt.Sprintf("%s: %s", kv.Key, kv.Value.describeTest()))
 			}

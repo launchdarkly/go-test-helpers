@@ -103,7 +103,7 @@ func (m *mockTestingT) Run(name string, action func(TestingT)) {
 func (m *mockTestingT) FailNow() {
 	m.lock.Lock()
 	defer m.lock.Unlock()
-	m.testState.failed = true
+	m.failed = true
 	runtime.Goexit()
 }
 

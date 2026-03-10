@@ -218,7 +218,7 @@ func (s *chunkedStreamingHandlerImpl) ServeHTTP(w http.ResponseWriter, _ *http.R
 
 	var closeNotifyCh <-chan bool
 	// CloseNotifier is deprecated but there's no way to use Context in this case
-	if closeNotifier, ok := w.(http.CloseNotifier); ok { //nolint:megacheck
+	if closeNotifier, ok := w.(http.CloseNotifier); ok { //nolint:staticcheck
 		closeNotifyCh = closeNotifier.CloseNotify()
 	}
 
