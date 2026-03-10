@@ -57,6 +57,6 @@ func WithTempDir(f func(path string)) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(path)
+	defer func() { _ = os.RemoveAll(path) }()
 	f(path)
 }

@@ -26,15 +26,15 @@ type SSEEvent struct {
 func (e SSEEvent) Bytes() []byte {
 	var buf bytes.Buffer
 	if e.ID != "" {
-		buf.WriteString(fmt.Sprintf("id: %s\n", e.ID))
+		fmt.Fprintf(&buf, "id: %s\n", e.ID)
 	}
 	if e.Event != "" {
-		buf.WriteString(fmt.Sprintf("event: %s\n", e.Event))
+		fmt.Fprintf(&buf, "event: %s\n", e.Event)
 	}
 	if e.RetryMillis > 0 {
-		buf.WriteString(fmt.Sprintf("retry: %d\n", e.RetryMillis))
+		fmt.Fprintf(&buf, "retry: %d\n", e.RetryMillis)
 	}
-	buf.WriteString(fmt.Sprintf("data: %s\n\n", e.Data))
+	fmt.Fprintf(&buf, "data: %s\n\n", e.Data)
 	return buf.Bytes()
 }
 
