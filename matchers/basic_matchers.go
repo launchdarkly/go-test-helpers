@@ -31,7 +31,7 @@ func BeNil() Matcher {
 			}
 			rv := reflect.ValueOf(value)
 			switch rv.Type().Kind() {
-			case reflect.Ptr, reflect.Slice, reflect.Map:
+			case reflect.Pointer, reflect.Slice, reflect.Map:
 				return rv.IsNil()
 			}
 			return false
