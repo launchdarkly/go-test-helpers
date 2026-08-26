@@ -16,14 +16,14 @@ import (
 //
 // If the type is a struct that has "json" field tags, it is converted to JSON.
 //
+// If the type is json.RawMessage, it is passed to jsonhelpers.CanonicalizeJSON.
+//
 // If the type implements fmt.Stringer, its String method is called.
 //
 // If the type is string, it is quoted, unless it already has bracket or brace delimiters.
 //
 // If the type is []byte, it is converted to a string unchanged, unless it is valid JSON
 // in which case it is passed to jsonhelpers.CanonicalizeJSON.
-//
-// If the type is json.RawMessage, it is passed to jsonhelpers.CanonicalizeJSON.
 //
 // If the type is a slice or array, it is formatted as [value1, value2, value3] (unlike
 // Go's default formatting which has no commas) and each value is recursively formatted
@@ -38,6 +38,11 @@ func DescribeValue(value any) string {
 		return string(jsonhelpers.CanonicalizeJSON(jsonhelpers.ToJSON(value)))
 	}
 	switch v := value.(type) {
+	// json.RawMessage must be checked before fmt.Stringer: as of Go 1.27 it is an alias for
+	// jsontext.Value, which has a String method, so a Stringer case first would bypass
+	// canonicalization.
+	case json.RawMessage:
+		return string(jsonhelpers.CanonicalizeJSON(v))
 	case fmt.Stringer:
 		return v.String()
 	case string:
@@ -49,8 +54,6 @@ func DescribeValue(value any) string {
 		}
 		return `"` + v + `"`
 	case []byte:
-		return string(jsonhelpers.CanonicalizeJSON(v))
-	case json.RawMessage:
 		return string(jsonhelpers.CanonicalizeJSON(v))
 	default:
 		rv := reflect.ValueOf(value)

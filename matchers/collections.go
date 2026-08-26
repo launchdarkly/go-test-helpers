@@ -112,7 +112,6 @@ func ItemsInAnyOrder(matchers ...Matcher) Matcher {
 					if m.test(unmatchedElements[j].value) {
 						unmatchedElements = append(unmatchedElements[0:j], unmatchedElements[j+1:]...)
 						unmatchedMatchers = append(unmatchedMatchers[0:i], unmatchedMatchers[i+1:]...)
-						j--
 						i--
 						break
 					}
