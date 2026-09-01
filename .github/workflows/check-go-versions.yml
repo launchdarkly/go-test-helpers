@@ -13,6 +13,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: launchdarkly/gh-actions/.github/workflows/sdk-go-versions.yml@main
+    # TODO(before merge): change back to @main. Pinned to the branch of
+    # launchdarkly/gh-actions#113 so this can be dispatched and observed before that PR
+    # merges; @main does not contain the workflow yet.
+    uses: launchdarkly/gh-actions/.github/workflows/sdk-go-versions.yml@feat/go-eol-versions-action
     with:
       branches: '["main"]'
