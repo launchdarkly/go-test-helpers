@@ -157,7 +157,7 @@ func (s *chunkedStreamingHandlerImpl) removeChannel(channelToRemove chan []byte)
 	// This is called when the client closed the connection.
 	go func() {
 		// Consume anything else that gets sent on this channel, until it's closed, to avoid deadlock
-		for range channelToRemove { //nolint:revive // Intentionally draining the channel
+		for range channelToRemove { // Intentionally draining the channel
 		}
 	}()
 
